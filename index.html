@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Claudia's Lab</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#e63946">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Claudia's Lab">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Creepster&family=Nunito:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --rojo:#e63946;--azul:#457b9d;--azul-osc:#1d3557;
+  --negro:#0a0a0f;--gris:#111118;--texto:#e8e8f0;
+  --am:#f4d35e;--verde:#06d6a0;--naranja:#f77f00;--morado:#7b2d8b;
+  --panel:rgba(20,20,35,.96);--borde:rgba(255,255,255,.09);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--negro);color:var(--texto);font-family:'Nunito',sans-serif;min-height:100vh;overflow-x:hidden}
+#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+.star{position:absolute;border-radius:50%;animation:twinkle var(--d,3s) ease-in-out infinite alternate;opacity:0}
+@keyframes twinkle{0%{opacity:0}100%{opacity:var(--o,.7)}}
+.cpz{position:fixed;top:-20px;border-radius:3px;animation:caer linear forwards;z-index:999;pointer-events:none}
+@keyframes caer{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+.titulo{text-align:center;padding:18px 16px 4px;position:relative;z-index:5}
+.titulo h1{font-family:'Creepster',cursive;font-size:clamp(1.8rem,5vw,3.2rem);color:var(--rojo);
+  text-shadow:0 0 20px var(--rojo),0 0 50px rgba(230,57,70,.3);letter-spacing:3px;animation:flicker 6s infinite}
+.titulo p{font-family:'Share Tech Mono',monospace;font-size:.78rem;color:var(--azul);letter-spacing:3px;margin-top:2px}
+@keyframes flicker{0%,94%,100%{opacity:1}95%{opacity:.3}96%{opacity:1}97.5%{opacity:.2}99%{opacity:.9}}
+#luces{display:flex;justify-content:center;gap:7px;padding:5px 8px;overflow:hidden;position:relative;z-index:5;max-width:100%}
+.luz{width:13px;height:17px;border-radius:50% 50% 42% 42%;animation:lF var(--d,.8s) ease-in-out infinite alternate;position:relative;flex-shrink:0}
+.luz::after{content:'';position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:3px;height:5px;background:#444;border-radius:1px}
+@keyframes lF{0%{opacity:.12;filter:blur(1px)}100%{opacity:1;filter:brightness(1.9)}}
+#luces.fiesta .luz{animation:lFiesta .35s ease-in-out infinite alternate!important}
+@keyframes lFiesta{0%{opacity:.2;transform:scaleY(.8)}100%{opacity:1;transform:scaleY(1.25);filter:brightness(2.2)}}
+#scorebar{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;padding:4px 10px;position:relative;z-index:5}
+.chip{background:var(--panel);border:1px solid var(--borde);border-radius:20px;padding:5px 12px;
+  font-family:'Share Tech Mono',monospace;font-size:.8rem;display:flex;align-items:center;gap:5px}
+.chip .v{color:var(--am)}
+.btn-logros{background:linear-gradient(135deg,var(--morado),var(--azul-osc));border:1px solid rgba(123,45,139,.5);
+  border-radius:20px;padding:5px 12px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;color:var(--texto);transition:transform .2s}
+.btn-logros:hover{transform:scale(1.06)}
+#tw{position:relative;z-index:5;max-width:480px;margin:10px auto;background:var(--panel);
+  border:1px solid var(--borde);border-radius:18px;padding:14px 18px;box-shadow:0 0 30px rgba(230,57,70,.07)}
+.tlbl{text-align:center;font-family:'Share Tech Mono',monospace;font-size:.67rem;color:var(--azul);letter-spacing:2px;margin-bottom:4px}
+#t-animo{text-align:center;font-family:'Creepster',cursive;font-size:1.25rem;color:var(--verde);
+  min-height:26px;margin-bottom:3px;text-shadow:0 0 10px rgba(6,214,160,.4)}
+.tpre{display:flex;gap:6px;justify-content:center;margin-bottom:7px;flex-wrap:wrap}
+.pbtn{background:rgba(69,123,157,.2);border:1px solid var(--azul);color:var(--azul);border-radius:7px;
+  padding:4px 14px;font-family:'Nunito',sans-serif;font-size:.82rem;cursor:pointer;transition:all .2s;font-weight:700}
+.pbtn:hover,.pbtn.act{background:var(--azul);color:#fff}
+#tnum{font-family:'Share Tech Mono',monospace;font-size:clamp(2.5rem,8vw,4rem);text-align:center;
+  color:var(--rojo);text-shadow:0 0 14px var(--rojo);letter-spacing:5px;padding:6px 0}
+#tnum.urg{animation:urgP .5s ease-in-out infinite}
+@keyframes urgP{0%,100%{color:var(--rojo)}50%{color:#fff;text-shadow:0 0 30px var(--rojo)}}
+.tctrl{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:7px}
+.btn{border:none;border-radius:11px;padding:9px 17px;font-family:'Nunito',sans-serif;font-weight:900;
+  font-size:.92rem;cursor:pointer;transition:all .18s}
+.btn:hover{transform:translateY(-2px) scale(1.04)}
+.btn:active{transform:scale(.95)}
+.btn:disabled{opacity:.3;cursor:not-allowed;transform:none!important}
+.br{background:linear-gradient(135deg,#e63946,#c1121f);color:#fff;box-shadow:0 3px 14px rgba(230,57,70,.4)}
+.bb{background:linear-gradient(135deg,#457b9d,#1d3557);color:#fff;box-shadow:0 3px 14px rgba(69,123,157,.4)}
+.bg{background:linear-gradient(135deg,#06d6a0,#0a9e77);color:#0a0a0f;box-shadow:0 3px 14px rgba(6,214,160,.4)}
+.by{background:linear-gradient(135deg,#f4d35e,#e9c46a);color:#0a0a0f;box-shadow:0 3px 14px rgba(244,211,94,.4)}
+.bp{background:linear-gradient(135deg,#7b2d8b,#4a0e5c);color:#fff;box-shadow:0 3px 14px rgba(123,45,139,.4)}
+.tw{position:relative;z-index:5;max-width:920px;margin:12px auto;padding:0 10px 24px}
+.tnav{display:flex;gap:3px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin;scrollbar-color:var(--rojo) transparent}
+.tnav::-webkit-scrollbar{height:3px}
+.tnav::-webkit-scrollbar-thumb{background:var(--rojo);border-radius:2px}
+.tb{flex-shrink:0;background:rgba(20,20,35,.8);border:1px solid var(--borde);border-radius:10px 10px 0 0;
+  padding:8px 12px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.78rem;font-weight:700;color:#777;transition:all .25s;white-space:nowrap}
+.tb:hover{color:var(--texto)}
+.tb.on{background:var(--panel);border-color:var(--rojo);color:var(--rojo);border-bottom-color:var(--panel)}
+.tp{display:none;background:var(--panel);border:1px solid var(--borde);border-radius:0 10px 10px 10px;padding:18px;min-height:400px}
+.tp.on{display:block}
+.tit{font-family:'Creepster',cursive;font-size:1.45rem;color:var(--am);text-shadow:0 0 10px rgba(244,211,94,.4);margin-bottom:9px}
+.desc{font-size:.86rem;color:#aaa;margin-bottom:11px;line-height:1.6}
+.porq{font-size:.73rem;color:rgba(110,190,255,.65);font-style:italic;margin-top:4px;line-height:1.4}
+.res{text-align:center;font-size:.98rem;font-weight:900;min-height:28px;padding:5px;border-radius:9px;margin-top:8px;transition:all .3s}
+.res.ok{color:var(--verde);background:rgba(6,214,160,.1)}
+.res.mal{color:var(--rojo);background:rgba(230,57,70,.1)}
+.flex{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+@keyframes popIn{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+@keyframes bnc{0%{transform:translateY(0)}100%{transform:translateY(-9px)}}
+
+/* RUTINA */
+.rut-item{background:rgba(255,255,255,.03);border:2px solid var(--borde);border-radius:16px;
+  margin-bottom:12px;overflow:hidden;transition:border-color .3s}
+.rut-item.done{border-color:var(--verde);opacity:.72}
+.rut-header{display:flex;align-items:center;gap:12px;padding:13px 14px;cursor:pointer}
+.rut-num{font-family:'Creepster',cursive;font-size:1.5rem;color:var(--am);min-width:32px;text-align:center;line-height:1}
+.rut-em{font-size:2rem;min-width:42px;text-align:center}
+.rut-info{flex:1}
+.rut-info h3{font-size:.96rem;font-weight:900;margin-bottom:2px}
+.rut-info .rut-rep{font-size:.78rem;color:var(--azul);font-weight:700;margin-bottom:1px}
+.rut-info p{font-size:.8rem;color:#aaa;line-height:1.4}
+.rut-ck{width:38px;height:38px;border-radius:50%;border:2px solid var(--borde);background:transparent;
+  cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;
+  transition:all .2s;flex-shrink:0;font-family:'Nunito',sans-serif}
+.rut-ck:hover{border-color:var(--verde);background:rgba(6,214,160,.15)}
+.rut-item.done .rut-ck{background:var(--verde);border-color:var(--verde);color:#000}
+/* Panel expandible con SVG + instrucción detallada */
+.rut-panel{display:none;padding:0 14px 14px;border-top:1px solid var(--borde);background:rgba(0,0,0,.15)}
+.rut-item.abierto .rut-panel{display:flex;gap:14px;align-items:flex-start;padding-top:12px}
+.rut-panel-svg{flex-shrink:0;width:120px;height:100px}
+.rut-panel-txt .rut-p-como{font-size:.9rem;font-weight:900;color:var(--verde);margin-bottom:5px}
+.rut-panel-txt .rut-p-pasos{font-size:.86rem;color:var(--texto);line-height:1.65}
+.rut-panel-txt .rut-p-truco{font-size:.76rem;color:var(--am);font-style:italic;margin-top:5px;line-height:1.4}
+.rut-expand-lbl{font-size:.72rem;color:#666;margin-left:auto;padding-right:4px;white-space:nowrap}
+
+/* PRAXIAS CSS (se puede mantener por compatibilidad) */
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:500px){.pg{grid-template-columns:1fr}}
+.pc{background:rgba(255,255,255,.04);border:2px solid var(--borde);border-radius:14px;
+  padding:12px;text-align:center;cursor:pointer;transition:all .25s}
+.pc:hover{border-color:rgba(255,255,255,.2)}
+.pc.activa{border-color:var(--verde);background:rgba(6,214,160,.07)}
+.pce{font-size:2.5rem;display:block;margin-bottom:4px}
+.pc.activa .pce{animation:bnc .6s ease-in-out infinite alternate}
+.pc h3{font-size:.88rem;font-weight:900;margin-bottom:2px}
+.pc p{font-size:.76rem;color:#aaa;line-height:1.4}
+.pc-cnt{font-family:'Share Tech Mono',monospace;font-size:1.2rem;color:var(--verde);margin:2px 0}
+
+/* ACTIVACION CSS (se mantiene por compatibilidad) */
+.act-pw{background:rgba(255,255,255,.06);border-radius:8px;height:14px;overflow:hidden;margin-bottom:5px}
+.act-pb{height:100%;background:linear-gradient(90deg,var(--verde),var(--am));border-radius:8px;transition:width .45s ease;box-shadow:0 0 8px rgba(6,214,160,.5)}
+.act-pl{text-align:center;font-size:.77rem;color:#aaa;margin-bottom:10px}
+.act-list{display:flex;flex-direction:column;gap:9px}
+.act-item{display:flex;align-items:center;gap:11px;background:rgba(255,255,255,.03);
+  border:2px solid var(--borde);border-radius:14px;padding:11px 13px;transition:all .3s}
+.act-item.done{border-color:var(--verde);background:rgba(6,214,160,.06);opacity:.72}
+.act-em{font-size:2rem;min-width:42px;text-align:center}
+.act-txt{flex:1}
+.act-txt h3{font-size:.92rem;font-weight:900;margin-bottom:1px}
+.act-txt p{font-size:.8rem;color:#aaa;line-height:1.4}
+.act-ck{width:36px;height:36px;border-radius:50%;border:2px solid var(--borde);background:transparent;
+  cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.act-ck:hover{border-color:var(--verde);background:rgba(6,214,160,.15)}
+.act-item.done .act-ck{background:var(--verde);border-color:var(--verde);color:#000}
+
+/* PRAXIAS */
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:500px){.pg{grid-template-columns:1fr}}
+.pc{background:rgba(255,255,255,.04);border:2px solid var(--borde);border-radius:14px;
+  padding:12px;text-align:center;cursor:pointer;transition:all .25s}
+.pc:hover{border-color:rgba(255,255,255,.2)}
+.pc.activa{border-color:var(--verde);background:rgba(6,214,160,.07)}
+.pce{font-size:2.5rem;display:block;margin-bottom:4px}
+.pc.activa .pce{animation:bnc .6s ease-in-out infinite alternate}
+.pc h3{font-size:.88rem;font-weight:900;margin-bottom:2px}
+.pc p{font-size:.76rem;color:#aaa;line-height:1.4}
+.pc-cnt{font-family:'Share Tech Mono',monospace;font-size:1.2rem;color:var(--verde);margin:2px 0}
+
+/* FONEMAS */
+.prt{width:96px;height:96px;border-radius:50%;margin:8px auto;
+  background:radial-gradient(circle,rgba(6,214,160,.3),rgba(123,45,139,.5),transparent);
+  border:3px solid var(--verde);animation:prtS 4s linear infinite;display:flex;align-items:center;justify-content:center;font-size:1.6rem}
+@keyframes prtS{0%,100%{box-shadow:0 0 18px var(--verde)}50%{box-shadow:0 0 36px var(--morado)}}
+.prt.ab{background:radial-gradient(circle,var(--verde),var(--morado),transparent)!important;transform:scale(1.28)}
+.fbig{font-family:'Creepster',cursive;font-size:clamp(3.8rem,15vw,6rem);text-align:center;
+  color:var(--verde);text-shadow:0 0 28px var(--verde);padding:11px;cursor:pointer;
+  border:2px solid rgba(6,214,160,.18);border-radius:15px;margin:9px 0;
+  animation:fG 2s ease-in-out infinite alternate;user-select:none;transition:transform .14s}
+.fbig:hover{transform:scale(1.06)}
+.fbig:active{transform:scale(.92)}
+@keyframes fG{0%{text-shadow:0 0 18px var(--verde)}100%{text-shadow:0 0 46px var(--verde),0 0 75px rgba(6,214,160,.4)}}
+.ftip{text-align:center;font-size:.84rem;color:#aaa;margin-bottom:7px}
+.fbw{height:11px;background:rgba(255,255,255,.08);border-radius:6px;overflow:hidden;margin:7px auto;max-width:340px}
+.fbb{height:100%;background:linear-gradient(90deg,var(--verde),var(--am));border-radius:6px;transition:width .4s ease}
+.sgrid{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:11px 0}
+.sb{min-width:56px;padding:8px 11px;border-radius:11px;border:2px solid rgba(6,214,160,.2);
+  background:rgba(6,214,160,.06);color:var(--verde);font-family:'Creepster',cursive;font-size:1.5rem;
+  cursor:pointer;transition:all .2s;user-select:none;text-align:center}
+.sb:hover{transform:scale(1.1);border-color:var(--verde);background:rgba(6,214,160,.18)}
+.sb:active{transform:scale(.88)}
+.sb.ac{border-color:var(--verde);background:rgba(6,214,160,.22);box-shadow:0 0 14px rgba(6,214,160,.4);transform:scale(1.07)}
+
+/* CUADRICULA LETRAS FONEMA */
+#fon-img-wrap{margin:10px auto;max-width:460px}
+#fon-letras-grid{display:flex;flex-direction:column;gap:8px;align-items:center}
+.fon-fila{display:flex;gap:8px;justify-content:center}
+.fon-letra-cell{display:flex;flex-direction:column;align-items:center;gap:4px}
+.fon-letra-cell .fon-letra-lbl{font-family:'Creepster',cursive;font-size:1.4rem;
+  color:var(--verde);text-shadow:0 0 8px rgba(6,214,160,.4);line-height:1}
+.fon-letra-cell .fon-letra-img{width:130px;height:130px;object-fit:cover;
+  border-radius:14px;border:2px solid rgba(6,214,160,.3);background:#0d1117;
+  display:block}
+.fon-letra-cell .fon-letra-ph{width:130px;height:130px;border-radius:14px;
+  border:2px dashed rgba(6,214,160,.2);background:rgba(6,214,160,.03);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.75rem;color:#666;text-align:center;line-height:1.4;padding:8px}
+@media(max-width:480px){
+  .fon-letra-cell .fon-letra-img,.fon-letra-cell .fon-letra-ph{width:100px;height:100px}
+}
+
+/* FONEMAS BOMBILLAS */
+.fon-bomb-wrap{display:flex;gap:7px;justify-content:center;flex-wrap:wrap;padding:8px 4px;margin-bottom:2px}
+.fbomb{width:18px;height:24px;border-radius:50% 50% 42% 42%;position:relative;
+  transition:all .35s ease;flex-shrink:0}
+.fbomb::after{content:'';position:absolute;top:-4px;left:50%;transform:translateX(-50%);
+  width:3px;height:5px;background:#555;border-radius:1px}
+.fbomb.off{background:rgba(255,255,255,.08);box-shadow:none;opacity:.4}
+.fbomb.on{opacity:1;animation:bombBrillo 1.2s ease-in-out infinite alternate}
+@keyframes bombBrillo{0%{filter:brightness(1)}100%{filter:brightness(1.7)}}
+.fbomb.nueva{animation:bombPop .4s ease forwards,bombBrillo 1.2s ease-in-out .4s infinite alternate}
+@keyframes bombPop{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.4)}100%{transform:scale(1);opacity:1}}
+
+/* SECUENCIAS */
+.ss{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:11px 0}
+.si{width:58px;height:58px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-size:1.65rem;background:rgba(255,255,255,.07);border:2px solid var(--borde);user-select:none}
+.so-wrap{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:9px}
+.so{width:64px;height:64px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-size:1.85rem;background:rgba(255,255,255,.07);border:2px solid var(--borde);cursor:pointer;user-select:none;transition:all .2s}
+.so:hover{transform:scale(1.12);border-color:rgba(255,255,255,.3)}
+.slbl{text-align:center;font-size:.98rem;color:var(--am);font-weight:900;margin:8px 0}
+
+/* MOTRICIDAD */
+.dw{position:relative;width:100%;max-width:440px;height:320px;margin:0 auto;
+  border:2px solid rgba(255,255,255,.1);border-radius:14px;background:#0d1117;overflow:hidden}
+.dot{position:absolute;width:28px;height:28px;border-radius:50%;border:3px solid var(--borde);
+  transform:translate(-50%,-50%);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:.65rem;font-weight:900;color:#fff;transition:all .2s;background:rgba(255,255,255,.05)}
+.dot.nd{border-color:var(--verde);background:rgba(6,214,160,.25);animation:dP .8s ease-in-out infinite}
+.dot.dd{border-color:var(--azul);background:rgba(69,123,157,.2);opacity:.5}
+@keyframes dP{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.35)}}
+#dSvg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.mfb{text-align:center;font-size:.93rem;font-weight:900;margin:8px 0;min-height:24px}
+
+/* LABERINTO */
+#mzC{border:2px solid rgba(255,255,255,.12);border-radius:12px;display:block;margin:0 auto;max-width:100%}
+.arrows{display:flex;flex-direction:column;align-items:center;gap:5px;margin:9px auto;width:fit-content}
+.arr-row{display:flex;gap:5px}
+.arr{width:54px;height:54px;border:2px solid rgba(255,255,255,.18);border-radius:10px;
+  background:rgba(255,255,255,.05);color:var(--texto);font-size:1.45rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;transition:all .14s;user-select:none}
+.arr:hover{background:rgba(255,255,255,.16);transform:scale(1.1)}
+.arr:active{transform:scale(.85);background:rgba(255,255,255,.24)}
+
+/* MEMORY */
+.mst{display:flex;gap:14px;justify-content:center;margin-bottom:9px}
+.mst .v{font-family:'Share Tech Mono',monospace;font-size:1.25rem;color:var(--am);display:block;text-align:center}
+.mst .l{font-size:.68rem;color:#888;display:block;text-align:center}
+.mlvls{display:flex;gap:6px;justify-content:center;margin-bottom:9px;flex-wrap:wrap}
+.lv{background:rgba(255,255,255,.05);border:1px solid var(--borde);border-radius:8px;
+  padding:5px 11px;color:#888;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.78rem;transition:all .2s}
+.lv.on{background:var(--am);color:#000;font-weight:900}
+.mmodo{display:flex;gap:7px;justify-content:center;margin-bottom:11px}
+.mmb{padding:6px 14px;border-radius:10px;border:2px solid var(--borde);background:rgba(255,255,255,.04);
+  color:#aaa;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;transition:all .2s}
+.mmb.on{border-color:var(--azul);background:rgba(69,123,157,.2);color:var(--texto)}
+#mg{display:grid;gap:7px;justify-content:center;margin:9px 0}
+.mc{background:rgba(20,20,35,.9);border:2px solid rgba(255,255,255,.1);border-radius:11px;
+  cursor:pointer;user-select:none;position:relative;perspective:300px;width:82px;height:82px}
+@media(min-width:600px){.mc{width:90px;height:90px}}
+.mci{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .42s}
+.mc.flip .mci{transform:rotateY(180deg)}
+.mcf,.mcb{position:absolute;inset:0;border-radius:9px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;backface-visibility:hidden;-webkit-backface-visibility:hidden;gap:2px}
+.mcb{background:linear-gradient(135deg,var(--azul-osc),var(--morado));font-size:1.35rem;
+  color:rgba(255,255,255,.35);font-family:'Creepster',cursive}
+.mcf{transform:rotateY(180deg);background:linear-gradient(135deg,#1a1a2e,#16213e)}
+.mcf .mem-em{font-size:2rem}
+.mcf .mem-pal{font-size:.62rem;font-weight:900;color:var(--am);text-align:center;
+  letter-spacing:.5px;line-height:1.2;padding:0 3px}
+.mc.mtch{border-color:var(--verde);box-shadow:0 0 13px rgba(6,214,160,.5)}
+
+/* RITMO */
+.beats{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:11px 0;min-height:68px;align-items:center}
+.beat{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;transition:all .12s;user-select:none;font-family:'Share Tech Mono',monospace;font-weight:900}
+.beat.off{background:rgba(255,255,255,.05);border:2px solid rgba(255,255,255,.1);color:#555}
+.beat.on{background:var(--naranja);box-shadow:0 0 20px var(--naranja);transform:scale(1.2);color:#fff}
+.beat.hit{background:var(--verde);box-shadow:0 0 20px var(--verde);color:#000}
+.beat.miss{background:var(--rojo);color:#fff;animation:shake .3s ease}
+.beat.clk{cursor:pointer;border:2px solid rgba(255,255,255,.14)}
+.beat.clk:hover{background:rgba(255,255,255,.11);transform:scale(1.08)}
+.beat.clk:active{transform:scale(.82)}
+.rst{text-align:center;font-size:.93rem;font-weight:900;min-height:25px;color:var(--verde);margin:5px 0}
+
+/* IMITACION */
+.iem{font-size:clamp(3.8rem,13vw,6rem);display:block;text-align:center;animation:bnc 1s ease-in-out infinite alternate;margin:11px 0}
+.ilbl{text-align:center;font-size:.98rem;color:var(--am);font-weight:900;margin-bottom:11px}
+.iopts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.iopt{width:80px;height:80px;border-radius:13px;border:2px solid var(--borde);background:rgba(255,255,255,.05);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:2.4rem;transition:all .2s;user-select:none}
+.iopt:hover{transform:scale(1.1);border-color:rgba(255,255,255,.3)}
+.iopt:active{transform:scale(.88)}
+.iopt.acierto{border-color:var(--verde);background:rgba(6,214,160,.15);animation:popIn .35s ease}
+.iopt.fallo{border-color:var(--rojo);background:rgba(230,57,70,.12)}
+
+/* LOGROS */
+.modal{display:none;position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.85);align-items:center;justify-content:center;padding:14px}
+.modal.open{display:flex}
+.mbox{background:var(--gris);border:1px solid rgba(230,57,70,.3);border-radius:18px;padding:20px;max-width:480px;width:100%;max-height:82vh;overflow-y:auto}
+.mtit{font-family:'Creepster',cursive;font-size:1.55rem;color:var(--rojo);text-align:center;margin-bottom:11px}
+.logro{display:flex;align-items:center;gap:9px;padding:8px;border-radius:10px;margin-bottom:6px;background:rgba(255,255,255,.03);border:1px solid var(--borde)}
+.logro.on{border-color:var(--am);background:rgba(244,211,94,.07)}
+.logro.off{opacity:.33}
+.lic{font-size:1.6rem;min-width:40px;text-align:center}
+.ltx h4{font-size:.83rem;font-weight:900;margin-bottom:1px}
+.ltx p{font-size:.7rem;color:#888}
+
+/* NOTIF */
+#nf{position:fixed;top:14px;right:14px;z-index:100;background:var(--panel);border:1px solid var(--verde);
+  border-radius:13px;padding:10px 15px;display:flex;align-items:center;gap:8px;font-weight:700;
+  transform:translateX(130%);transition:transform .4s ease;max-width:270px;box-shadow:0 4px 26px rgba(0,0,0,.5)}
+#nf.show{transform:translateX(0)}
+#nf-i{font-size:1.35rem}
+#nf-t{font-size:.84rem}
+#nf-s{font-size:.69rem;color:#aaa;font-weight:400}
+
+/* MISION CUMPLIDA */
+#ov{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.6);
+  align-items:center;justify-content:center}
+#ov.show{display:flex}
+#ov-txt{font-family:'Creepster',cursive;font-size:clamp(1.9rem,7vw,3.6rem);color:var(--am);
+  text-shadow:0 0 30px var(--am);text-align:center;animation:popIn .6s ease;padding:24px;
+  background:rgba(10,10,15,.85);border-radius:20px;border:2px solid var(--am)}
+</style>
+</head>
+<body>
+<div id="bg"></div>
+<div id="ov"><div id="ov-txt">⚡ ¡MUY BIEN CLAUDIA! ⚡<br>🔦 MISIÓN CUMPLIDA 🔦</div></div>
+
+<div class="titulo"><h1>🔦 CLAUDIA'S LAB 🔦</h1><p>// EL MUNDO DEL REVÉS //</p></div>
+<div id="luces"></div>
+
+<div id="scorebar">
+  <div class="chip">⚡ <span class="v" id="sp">0</span> energía</div>
+  <div class="chip">🏅 Niv <span class="v" id="sn">1</span></div>
+  <div class="chip">🔥 Racha <span class="v" id="sr">0</span></div>
+  <button class="btn-logros" onclick="abrirLogros()">🏆 Logros</button>
+</div>
+
+<div id="tw">
+  <div class="tlbl">⏱ TEMPORIZADOR DE MISIÓN</div>
+  <div id="t-animo"></div>
+  <div class="tpre">
+    <button class="pbtn act" onclick="setTimer(600,this)">10 min</button>
+    <button class="pbtn" onclick="setTimer(900,this)">15 min</button>
+    <button class="pbtn" onclick="setTimer(1200,this)">20 min</button>
+  </div>
+  <div id="tnum">10:00</div>
+  <div class="tctrl">
+    <button class="btn bg" onclick="tStart()">▶ EMPEZAR</button>
+    <button class="btn by" onclick="tPause()">⏸ PAUSA</button>
+    <button class="btn br" onclick="tReset()">↺ RESET</button>
+  </div>
+</div>
+
+<div class="tw">
+  <div class="tnav">
+    <button class="tb on" onclick="vTab('rut',this)">💪 Rutina</button>
+    <button class="tb"    onclick="vTab('fon',this)">🔤 Fonemas</button>
+    <button class="tb"    onclick="vTab('seq',this)">🧩 Secuencias</button>
+    <button class="tb"    onclick="vTab('mot',this)">🖐️ Motricidad</button>
+    <button class="tb"    onclick="vTab('maz',this)">🌀 Laberinto</button>
+    <button class="tb"    onclick="vTab('mem',this)">🃏 Memory</button>
+    <button class="tb"    onclick="vTab('rit',this)">🎵 Ritmo</button>
+    <button class="tb"    onclick="vTab('imi',this)">🎭 Imitación</button>
+  </div>
+
+  <!-- RUTINA DIARIA -->
+  <div class="tp on" id="tp-rut">
+    <div class="tit">💪 Rutina Diaria de Claudia</div>
+    <div class="desc">Estos son los ejercicios de hoy. Hazlos en orden y pulsa ✅ cuando termines cada uno. ¡El portal se abre cuando acabes todos!</div>
+    <div class="act-pw"><div class="act-pb" id="rut-bar" style="width:0%"></div></div>
+    <div class="act-pl" id="rut-lbl">0 de 8 ejercicios completados</div>
+    <div id="rut-list"></div>
+    <div class="res" id="rut-res"></div>
+    <div class="flex"><button class="btn br" onclick="resetRut()">🔄 Reiniciar rutina</button></div>
+  </div>
+
+  <!-- FONEMAS -->
+  <div class="tp" id="tp-fon">
+    <div class="tit">🔤 Misión Fonemas</div>
+    <div class="desc">Pulsa cada sílaba para escucharla. Repítela en voz alta y pulsa ✅ ¡Lo dije! Enciende todas las bombillas.</div>
+    <div style="display:flex;justify-content:flex-end;margin-bottom:6px">
+      <button id="fon-mute-btn" onclick="toggleMute()" style="background:rgba(255,255,255,.07);border:2px solid var(--borde);border-radius:10px;padding:6px 14px;cursor:pointer;font-size:.85rem;font-weight:900;color:var(--texto);font-family:'Nunito',sans-serif;transition:all .2s" title="Activar/desactivar voz">🔊 Voz activada</button>
+    </div>
+    <!-- Bombillas de progreso global -->
+    <div id="fon-bombillas" class="fon-bomb-wrap"></div>
+    <div style="text-align:center;font-size:.77rem;color:#888;margin:4px 0 8px" id="fc">0 / 20 sílabas</div>
+    <div class="prt" id="prt">🌀</div>
+    <div class="ftip" id="ftip">👆 Pulsa una sílaba para escucharla</div>
+    <div class="sgrid" id="fsil"></div>
+    <div class="fbig" id="fbig" onclick="playF()">A</div>
+    <!-- CUADRICULA DE IMAGENES POR LETRA -->
+    <div id="fon-img-wrap">
+      <div id="fon-letras-grid"></div>
+      <div id="fon-tip-box" class="fon-tip-box"></div>
+    </div>
+    <div class="flex">
+      <button class="btn bg" onclick="fonOk()">✅ ¡Lo dije!</button>
+      <button class="btn bb" onclick="nextSerie()">🔀 Nueva serie</button>
+    </div>
+    <div class="res" id="fon-res"></div>
+  </div>
+
+  <!-- SECUENCIAS -->
+  <div class="tp" id="tp-seq">
+    <div class="tit">🧩 Secuencias Secretas</div>
+    <div class="desc">Descifra el patrón del Mundo del Revés. ¿Qué elemento viene después?</div>
+    <div class="slbl" id="sq-p">Pulsa "Nueva secuencia" para empezar</div>
+    <div class="ss" id="sq-s"></div>
+    <div class="slbl" id="sq-p2"></div>
+    <div class="so-wrap" id="sq-o"></div>
+    <div class="res" id="sq-res"></div>
+    <div class="flex" style="margin-top:11px"><button class="btn br" onclick="newSeq()">🔀 Nueva secuencia</button></div>
+  </div>
+
+  <!-- MOTRICIDAD -->
+  <div class="tp" id="tp-mot">
+    <div class="tit">🖐️ Laboratorio de Destreza</div>
+    <div class="desc">Toca los puntos numerados en orden para dibujar la figura secreta.</div>
+    <div class="mfb" id="mfb">Pulsa "Nueva figura" para empezar</div>
+    <div class="dw" id="dw"><svg id="dSvg"></svg></div>
+    <div class="flex" style="margin-top:9px"><button class="btn bb" onclick="newDots()">🔀 Nueva figura</button></div>
+  </div>
+
+  <!-- LABERINTO -->
+  <div class="tp" id="tp-maz">
+    <div class="tit">🌀 Laberinto del Revés</div>
+    <div class="desc">Lleva a Eleven 👧 hasta la salida 🚪 sin tocar las paredes.</div>
+    <canvas id="mzC" width="322" height="322"></canvas>
+    <div class="res" id="maz-res"></div>
+    <div class="arrows">
+      <div class="arr-row"><button class="arr" onclick="mvMaz(0,-1)">⬆️</button></div>
+      <div class="arr-row">
+        <button class="arr" onclick="mvMaz(-1,0)">⬅️</button>
+        <button class="arr" onclick="mvMaz(0,1)">⬇️</button>
+        <button class="arr" onclick="mvMaz(1,0)">➡️</button>
+      </div>
+    </div>
+    <div class="flex"><button class="btn br" onclick="newMaz()">🔀 Nuevo laberinto</button></div>
+  </div>
+
+  <!-- MEMORY -->
+  <div class="tp" id="tp-mem">
+    <div class="tit">🃏 Memory del Mundo del Revés</div>
+    <div class="desc">Encuentra todas las parejas. ¡Elige modo y nivel!</div>
+    <div class="mmodo">
+      <button class="mmb on" id="mb-ig" onclick="setMemModo('ig',this)">🟰 Parejas iguales</button>
+      <button class="mmb"    id="mb-pw" onclick="setMemModo('pw',this)">🔤 Imagen + Palabra</button>
+    </div>
+    <div class="mst">
+      <div class="mst"><span class="v" id="mm-m">0</span><span class="l">Movimientos</span></div>
+      <div class="mst"><span class="v" id="mm-p">0</span><span class="l">Parejas</span></div>
+      <div class="mst"><span class="v" id="mm-t">0s</span><span class="l">Tiempo</span></div>
+    </div>
+    <div class="mlvls">
+      <button class="lv on" onclick="initMem(2,this)">Niv 1 — 4 cartas</button>
+      <button class="lv"    onclick="initMem(3,this)">Niv 2 — 6 cartas</button>
+      <button class="lv"    onclick="initMem(4,this)">Niv 3 — 8 cartas</button>
+      <button class="lv"    onclick="initMem(8,this)">Niv 4 — 16 cartas</button>
+      <button class="lv"    onclick="initMem(18,this)">Niv 5 — 36 cartas</button>
+    </div>
+    <div id="mg"></div>
+    <div class="res" id="mem-res"></div>
+  </div>
+
+  <!-- RITMO -->
+  <div class="tp" id="tp-rit">
+    <div class="tit">🎵 Ritmo del Mundo del Revés</div>
+    <div class="desc">Mira qué botones se iluminan en naranja. Luego pulsa exactamente esos mismos botones para repetir el ritmo.</div>
+    <div style="text-align:center;font-size:.84rem;color:#aaa;margin-bottom:5px" id="rit-instr">Pulsa "Mostrar ritmo" para ver el patrón</div>
+    <div class="beats" id="beats"></div>
+    <div class="rst" id="rst"></div>
+    <div class="flex">
+      <button class="btn br" id="rb-show" onclick="showRit()">🎵 Mostrar ritmo</button>
+      <button class="btn bg" id="rb-rep"  onclick="startRep()" disabled>👏 ¡Repetir!</button>
+      <button class="btn bb"              onclick="newRit()">🔀 Nuevo ritmo</button>
+    </div>
+    <div class="res" id="rit-res"></div>
+  </div>
+
+  <!-- IMITACION -->
+  <div class="tp" id="tp-imi">
+    <div class="tit">🎭 Copia a Eleven</div>
+    <div class="desc">Eleven está haciendo algo especial. ¿Cuál de las opciones es exactamente igual? ¡10 rondas!</div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="flex:1;background:rgba(255,255,255,.07);border-radius:8px;height:13px;overflow:hidden">
+        <div id="imi-bar" style="height:100%;background:linear-gradient(90deg,var(--morado),var(--rojo));border-radius:8px;width:0%;transition:width .4s ease"></div>
+      </div>
+      <div style="font-family:'Share Tech Mono',monospace;font-size:.9rem;color:var(--am);white-space:nowrap" id="imi-cnt">0 / 10</div>
+    </div>
+    <span class="iem" id="iem">🤔</span>
+    <div class="ilbl" id="ilbl">Pulsa "Empezar" para comenzar las 10 rondas</div>
+    <div class="iopts" id="iopts"></div>
+    <div class="res" id="imi-res"></div>
+    <div class="flex" style="margin-top:9px">
+      <button class="btn br" onclick="startImi()">🎭 Empezar / Reiniciar</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGROS MODAL -->
+<div class="modal" id="modal-lg">
+  <div class="mbox">
+    <div class="mtit">🏆 LOGROS DE CLAUDIA</div>
+    <div id="lg-list"></div>
+    <div class="flex" style="margin-top:11px"><button class="btn br" onclick="cerrarLogros()">✖ Cerrar</button></div>
+  </div>
+</div>
+
+<div id="nf"><div id="nf-i">🏆</div><div><div id="nf-t"></div><div id="nf-s"></div></div></div>
+
+<script>
+// CAPTURADOR DE ERRORES GLOBAL
+window._errBox=null;
+window.onerror=function(msg,src,line,col,err){
+  if(!window._errBox){
+    window._errBox=document.createElement('div');
+    window._errBox.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:#c1121f;color:#fff;font-family:monospace;font-size:12px;padding:10px 14px;line-height:1.7;word-break:break-all;max-height:40vh;overflow-y:auto';
+    document.body.appendChild(window._errBox);
+  }
+  var stack=err&&err.stack?err.stack:'(sin stack)';
+  window._errBox.innerHTML+='<b>ERROR linea '+line+' col '+col+':</b> '+msg+'<br><small>'+stack+'</small><hr style="border-color:rgba(255,255,255,.3)">';
+  return false;
+};
+window.addEventListener('unhandledrejection',function(e){
+  if(window.onerror)window.onerror('Promise rechazada: '+(e.reason||'?'),'',0,0,null);
+});
+
+var S={pts:0,niv:1,racha:0,tSeg:600,tTotal:600,tOn:false,tIV:null,
+  fSIdx:0,fSiIdx:0,fEng:0,fonTotal:0,prxCnt:{},mMov:0,mPar:0,mSeg:0,mIV:null,logros:{}};
+
+// FONDO
+(function(){var bg=document.getElementById('bg');
+  for(var i=0;i<70;i++){var e=document.createElement('div');e.className='star';
+  var z=Math.random()*3+1;e.style.cssText='width:'+z+'px;height:'+z+'px;left:'+(Math.random()*100)+'%;top:'+(Math.random()*100)+'%;--d:'+(Math.random()*4+2).toFixed(1)+'s;--o:'+(Math.random()*.6+.2).toFixed(2)+';animation-delay:'+(Math.random()*5).toFixed(1)+'s';
+  bg.appendChild(e);}
+})();
+
+// LUCES
+var LN=20,lEnc=0;
+(function(){var cols=['#e63946','#f77f00','#f4d35e','#06d6a0','#457b9d','#7b2d8b','#fff'];
+  var c=document.getElementById('luces');
+  for(var i=0;i<LN;i++){var e=document.createElement('div');e.className='luz';
+  e.style.cssText='background:'+cols[i%cols.length]+';--d:'+(Math.random()*1.4+.4).toFixed(2)+'s;animation-delay:'+(Math.random()*3).toFixed(2)+'s';
+  c.appendChild(e);}
+})();
+function encLuz(){
+  lEnc++;
+  if(lEnc>=LN){lEnc=0;
+    var lc=document.getElementById('luces');lc.classList.add('fiesta');confeti();sonar('win');
+    document.getElementById('ov').classList.add('show');
+    setTimeout(function(){lc.classList.remove('fiesta');document.getElementById('ov').classList.remove('show');},4500);
+  }
+}
+function confeti(){
+  var cols=['#e63946','#f4d35e','#06d6a0','#f77f00','#7b2d8b','#457b9d','#fff'];
+  for(var i=0;i<90;i++){(function(){
+    var e=document.createElement('div');e.className='cpz';
+    var w=Math.random()*12+5,h=Math.random()*8+4;
+    e.style.cssText='left:'+(Math.random()*100)+'%;width:'+w+'px;height:'+h+'px;background:'+cols[Math.floor(Math.random()*cols.length)]+';animation-duration:'+(Math.random()*2+1.5).toFixed(1)+'s;animation-delay:'+(Math.random()*.9).toFixed(2)+'s';
+    document.body.appendChild(e);setTimeout(function(){e.remove();},5000);
+  })();}
+}
+
+// PUNTOS
+function addPts(n){S.pts+=n;S.racha++;S.niv=Math.floor(S.pts/100)+1;
+  document.getElementById('sp').textContent=S.pts;
+  document.getElementById('sn').textContent=S.niv;
+  document.getElementById('sr').textContent=S.racha;
+  if(S.pts>=100)desblq('score_100');if(S.pts>=500)desblq('score_500');encLuz();
+}
+function resetRacha(){S.racha=0;document.getElementById('sr').textContent=0;}
+
+// NOTIF
+function notif(i,t,s){
+  document.getElementById('nf-i').textContent=i;
+  document.getElementById('nf-t').textContent=t;
+  document.getElementById('nf-s').textContent=s;
+  var n=document.getElementById('nf');n.classList.add('show');
+  clearTimeout(n._t);n._t=setTimeout(function(){n.classList.remove('show');},3200);
+}
+
+// LOGROS
+var LGRS=[
+  {id:'first_fon',ico:'🎤',tit:'Primera Sílaba',desc:'Completaste tu primer fonema'},
+  {id:'fon10',ico:'⚡',tit:'Maestra del Sonido',desc:'Llenaste la barra de energía de fonemas'},
+  {id:'mem_ok',ico:'🧠',tit:'Memoria de Eleven',desc:'Completaste el memory'},
+  {id:'maz_ok',ico:'🌀',tit:'Exploradora del Revés',desc:'Resolviste el laberinto'},
+  {id:'rit_ok',ico:'🎵',tit:'Reina del Ritmo',desc:'Repetiste un patrón de ritmo'},
+  {id:'imi5',ico:'🎭',tit:'Actriz Estrella',desc:'Acertaste 5 imitaciones'},
+  {id:'seq5',ico:'🧩',tit:'Genio de Secuencias',desc:'Acertaste 5 secuencias'},
+  {id:'act_ok',ico:'🏃',tit:'Calentamiento Total',desc:'Completaste todos los ejercicios de activación'},
+  {id:'score_100',ico:'💯',tit:'100 de Energía',desc:'Acumulaste 100 puntos'},
+  {id:'score_500',ico:'🔥',tit:'¡SUPERPODEROSA!',desc:'Acumulaste 500 puntos'},
+];
+function desblq(id){if(S.logros[id])return;S.logros[id]=true;
+  var l=LGRS.find(function(x){return x.id===id;});if(l)notif(l.ico,'¡Logro desbloqueado!',l.tit);
+}
+function abrirLogros(){
+  var h='';LGRS.forEach(function(l){var on=S.logros[l.id];
+    h+='<div class="logro '+(on?'on':'off')+'"><div class="lic">'+l.ico+'</div><div class="ltx"><h4>'+l.tit+'</h4><p>'+l.desc+'</p></div>'+(on?'<span style="color:var(--am)">✨</span>':'<span style="color:#444">🔒</span>')+'</div>';
+  });
+  document.getElementById('lg-list').innerHTML=h;
+  document.getElementById('modal-lg').classList.add('open');
+}
+function cerrarLogros(){document.getElementById('modal-lg').classList.remove('open');}
+
+// PESTAÑAS
+var tinit={};
+function vTab(id,btn){
+  document.querySelectorAll('.tp').forEach(function(p){p.classList.remove('on');});
+  document.querySelectorAll('.tb').forEach(function(b){b.classList.remove('on');});
+  document.getElementById('tp-'+id).classList.add('on');btn.classList.add('on');
+  if(!tinit[id]){tinit[id]=true;
+    var fn={fon:initFon,seq:newSeq,mot:newDots,maz:newMaz,
+      mem:function(){initMem(2,document.querySelector('.lv'));},rit:newRit,imi:startImi};
+    if(fn[id])fn[id]();
+  }
+}
+
+// SONIDOS
+var _AC=null;
+// Intentar resumir el contexto en el primer toque/click del usuario
+function _initAudioOnGesture(){
+  if(_AC&&_AC.state==='suspended'){try{_AC.resume();}catch(e){}}
+}
+document.addEventListener('click',_initAudioOnGesture,{passive:true});
+document.addEventListener('touchstart',_initAudioOnGesture,{passive:true});
+
+function getAC(){
+  if(!_AC){
+    try{
+      var Ctx=window.AudioContext||window.webkitAudioContext;
+      if(Ctx)_AC=new Ctx();
+    }catch(e){return null;}
+  }
+  if(_AC&&_AC.state==='suspended'){
+    try{_AC.resume();}catch(e){}
+  }
+  return (_AC&&_AC.state!=='closed')?_AC:null;
+}
+function sonar(tp){var ac=getAC();if(!ac)return;
+  try{var t=ac.currentTime;
+    function ton(f,s,d,v,w){var o=ac.createOscillator(),g=ac.createGain();
+      o.type=w||'sine';o.frequency.value=f;o.connect(g);g.connect(ac.destination);
+      g.gain.setValueAtTime(0,t+s);g.gain.linearRampToValueAtTime(v||.22,t+s+.03);
+      g.gain.exponentialRampToValueAtTime(.001,t+s+d);o.start(t+s);o.stop(t+s+d+.05);}
+    if(tp==='ok'){ton(523,0,.13);ton(659,.16,.13);}
+    else if(tp==='err'){ton(270,0,.2,.17,'sawtooth');}
+    else if(tp==='win'){ton(523,0,.11);ton(659,.14,.11);ton(784,.28,.11);ton(1047,.43,.28);}
+    else if(tp==='tick'){ton(880,0,.07,.1,'square');}
+    else if(tp==='flip'){ton(440,0,.09,.13);ton(660,.09,.09,.13);}
+    else if(tp==='match'){ton(880,0,.1,.18);ton(1108,.13,.14,.18);}
+    else if(tp==='portal'){var o=ac.createOscillator(),g=ac.createGain();
+      o.type='sine';o.frequency.value=140;o.frequency.exponentialRampToValueAtTime(860,t+.75);
+      o.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(.27,t);g.gain.exponentialRampToValueAtTime(.001,t+.8);
+      o.start(t);o.stop(t+.85);}
+  }catch(e){}
+}
+function pitido(f){var ac=getAC();if(!ac)return;
+  try{var o=ac.createOscillator(),g=ac.createGain();o.type='sine';o.frequency.value=f;
+    o.connect(g);g.connect(ac.destination);g.gain.setValueAtTime(.22,ac.currentTime);
+    g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.22);o.start(ac.currentTime);o.stop(ac.currentTime+.25);}catch(e){}
+}
+
+// TIMER
+var ANIMOS=['¡Vamos Claudia! 💪','¡Tú puedes Claudia! ⚡','¡Eres increíble Claudia! 🌟',
+  '¡Adelante Claudia! 🔦','¡Tú lo tienes Claudia! 🌀','¡Dale Claudia, tú puedes! 🎯',
+  '¡Eleven te apoya Claudia! 👧','¡El poder está en ti! ✨','¡Fuerza Claudia! 🦁',
+  '¡Misión en marcha Claudia! 🚀','¡Nada te detiene Claudia! ⭐'];
+function setTimer(s,btn){S.tTotal=s;S.tSeg=s;clearInterval(S.tIV);S.tOn=false;
+  document.querySelectorAll('.pbtn').forEach(function(b){b.classList.remove('act');});btn.classList.add('act');updTimer();
+}
+function tStart(){if(S.tOn)return;if(S.tSeg<=0)S.tSeg=S.tTotal;
+  document.getElementById('t-animo').textContent=ANIMOS[Math.floor(Math.random()*ANIMOS.length)];
+  sonar('ok');S.tOn=true;
+  S.tIV=setInterval(function(){S.tSeg--;updTimer();
+    var el=document.getElementById('tnum');
+    if(S.tSeg<=10)el.classList.add('urg');else el.classList.remove('urg');
+    if(S.tSeg<=0){clearInterval(S.tIV);S.tOn=false;sonar('win');
+      notif('⏱','¡Tiempo!','¡Misión completada Claudia!');
+      document.getElementById('t-animo').textContent='¡Misión completada! 🎉';}
+  },1000);
+}
+function tPause(){clearInterval(S.tIV);S.tOn=false;}
+function tReset(){clearInterval(S.tIV);S.tOn=false;S.tSeg=S.tTotal;
+  document.getElementById('tnum').classList.remove('urg');document.getElementById('t-animo').textContent='';updTimer();}
+function updTimer(){
+  var m=String(Math.floor(S.tSeg/60)).padStart(2,'0'),s=String(S.tSeg%60).padStart(2,'0');
+  document.getElementById('tnum').textContent=m+':'+s;
+}
+
+// RUTINA DIARIA — ejercicios fijos ordenados con guía visual
+// SVGs estilo cartoon: labios gruesos, dientes blancos, lengua rosa, fondo oscuro boca
+var M = {
+  // Función generadora de la base de la boca para no repetir código
+  // Cada SVG es 120x100 viewBox para más detalle
+};
+
+// SVGs individuales inspirados en las imágenes de referencia
+var RUT_SVG = {
+
+  // SOPLAR — labios en O pequeña, líneas de aire saliendo
+  soplo: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">'
+    // Labio superior
+    +'<path d="M25 42 Q60 30 95 42" stroke="#d63031" stroke-width="10" stroke-linecap="round" fill="none"/>'
+    // Labio inferior
+    +'<path d="M25 52 Q60 68 95 52" stroke="#d63031" stroke-width="10" stroke-linecap="round" fill="none"/>'
+    // Interior boca (pequeña apertura)
+    +'<ellipse cx="60" cy="48" rx="18" ry="8" fill="#5c0a0a"/>'
+    // Lengua pequeña
+    +'<ellipse cx="60" cy="50" rx="10" ry="5" fill="#e17055"/>'
+    // Dientes arriba
+    +'<ellipse cx="60" cy="44" rx="14" ry="4" fill="white" opacity=".9"/>'
+    // Líneas de aire saliendo
+    +'<path d="M98 40 Q108 37 116 39" stroke="#06d6a0" stroke-width="2.5" stroke-linecap="round" fill="none"/>'
+    +'<path d="M98 47 Q110 45 117 47" stroke="#06d6a0" stroke-width="2.2" stroke-linecap="round" fill="none"/>'
+    +'<path d="M98 54 Q108 53 115 55" stroke="#06d6a0" stroke-width="2" stroke-linecap="round" fill="none"/>'
+    +'<text x="5" y="96" font-size="9" fill="#06d6a0" font-family="sans-serif" font-weight="bold">SOPLA FUERTE</text>'
+    +'</svg>',
+
+  // LENGUA A LOS LADOS — boca semiabierta, lengua apuntando a la derecha
+  lengua_lados: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">'
+    // Labio superior
+    +'<path d="M20 38 Q60 25 100 38" stroke="#d63031" stroke-width="11" stroke-linecap="round" fill="none"/>'
+    // Labio inferior
+    +'<path d="M20 55 Q60 70 100 55" stroke="#d63031" stroke-width="11" stroke-linecap="round" fill="none"/>'
+    // Interior
+    +'<path d="M22 40 Q60 28 98 40 Q98 57 60 68 Q22 57 22 40Z" fill="#5c0a0a"/>'
+    // Dientes arriba
+    +'<ellipse cx="60" cy="38" rx="30" ry="6" fill="white" opacity=".9"/>'
+    // Dientes abajo
+    +'<ellipse cx="60" cy="57" rx="28" ry="5" fill="white" opacity=".7"/>'
+    // Lengua apuntando a la derecha (fuera de la boca)
+    +'<path d="M60 50 Q85 45 105 48 Q105 56 85 56 Q70 58 60 54Z" fill="#e17055" stroke="#c0392b" stroke-width="1"/>'
+    // Flecha indicando dirección
+    +'<path d="M106 50 L116 50" stroke="#f4d35e" stroke-width="2.5" stroke-linecap="round"/>'
+    +'<polygon points="116,47 121,50 116,53" fill="#f4d35e"/>'
+    +'<text x="5" y="96" font-size="9" fill="#f4d35e" font-family="sans-serif" font-weight="bold">LENGUA AL LADO</text>'
+    +'</svg>',
+
+  // MEJILLAS INFLADAS — cara ancha, mejillas hinchadas, labios cerrados
+  mejillas: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">'
+    // Mejilla izquierda inflada
+    +'<ellipse cx="18" cy="50" rx="18" ry="20" fill="#f8b4b4" stroke="#d63031" stroke-width="1.5"/>'
+    // Mejilla derecha inflada
+    +'<ellipse cx="102" cy="50" rx="18" ry="20" fill="#f8b4b4" stroke="#d63031" stroke-width="1.5"/>'
+    // Labio superior (labios cerrados)
+    +'<path d="M28 45 Q60 36 92 45" stroke="#d63031" stroke-width="9" stroke-linecap="round" fill="none"/>'
+    // Labio inferior
+    +'<path d="M28 52 Q60 62 92 52" stroke="#d63031" stroke-width="9" stroke-linecap="round" fill="none"/>'
+    // Línea de unión labios
+    +'<path d="M28 48 Q60 50 92 48" stroke="#a8000a" stroke-width="2" fill="none"/>'
+    // Flechas indicando presión
+    +'<text x="10" y="22" font-size="11" fill="#f77f00" font-family="sans-serif">←</text>'
+    +'<text x="93" y="22" font-size="11" fill="#f77f00" font-family="sans-serif">→</text>'
+    +'<text x="5" y="96" font-size="9" fill="#f77f00" font-family="sans-serif" font-weight="bold">MEJILLAS INFLADAS</text>'
+    +'</svg>',
+
+  // BOCA MUY ABIERTA (sonrisa/A) — estilo AE de las imágenes
+  boca_abierta: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">'
+    // Labio superior grueso
+    +'<path d="M15 35 Q35 20 60 22 Q85 20 105 35" stroke="#d63031" stroke-width="12" stroke-linecap="round" fill="none"/>'
+    // Labio inferior grueso
+    +'<path d="M15 60 Q35 78 60 80 Q85 78 105 60" stroke="#d63031" stroke-width="12" stroke-linecap="round" fill="none"/>'
+    // Interior boca grande
+    +'<path d="M18 38 Q60 26 102 38 Q102 62 60 78 Q18 62 18 38Z" fill="#5c0a0a"/>'
+    // Lengua en el fondo (plana)
+    +'<ellipse cx="60" cy="68" rx="28" ry="10" fill="#e17055"/>'
+    +'<ellipse cx="60" cy="65" rx="20" ry="6" fill="#f0908a"/>'
+    // Dientes arriba
+    +'<ellipse cx="60" cy="38" rx="32" ry="7" fill="white" opacity=".95"/>'
+    // Separaciones dientes
+    +'<line x1="45" y1="32" x2="45" y2="44" stroke="#eee" stroke-width="1"/>'
+    +'<line x1="60" y1="31" x2="60" y2="44" stroke="#eee" stroke-width="1"/>'
+    +'<line x1="75" y1="32" x2="75" y2="44" stroke="#eee" stroke-width="1"/>'
+    // Dientes abajo
+    +'<ellipse cx="60" cy="61" rx="28" ry="6" fill="white" opacity=".8"/>'
+    +'<text x="15" y="96" font-size="9" fill="#e63946" font-family="sans-serif" font-weight="bold">BOCA MUY ABIERTA</text>'
+    +'</svg>',
+
+  // BESOS / LABIOS EN O — labios redondeados hacia adelante
+  labios_beso: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">'
+    // Labio superior redondeado (forma de beso)
+    +'<path d="M38 40 Q50 28 60 30 Q70 28 82 40" stroke="#d63031" stroke-width="11" stroke-linecap="round" fill="none"/>'
+    // Labio inferior redondeado
+    +'<path d="M38 55 Q50 68 60 68 Q70 68 82 55" stroke="#d63031" stroke-width="11" stroke-linecap="round" fill="none"/>'
+    // Interior ovalado pequeño
+    +'<ellipse cx="60" cy="48" rx="15" ry="14" fill="#5c0a0a"/>'
+    // Lengua pequeña asomando
+    +'<ellipse cx="60" cy="52" rx="9" ry="6" fill="#e17055"/>'
+    // Flechas indicando labios hacia adelante
+    +'<path d="M20 48 L32 48" stroke="#f4d35e" stroke-width="2" stroke-linecap="round" stroke-dasharray="3,2"/>'
+    +'<path d="M88 48 L100 48" stroke="#f4d35e" stroke-width="2" stroke-linecap="round" stroke-dasharray="3,2"/>'
+    +'<text x="5" y="96" font-size="9" fill="#f4d35e" font-family="sans-serif" font-weight="bold">LABIOS EN CIRCULO</text>'
+    +'</svg>',
+
+  // LABIOS APRETADOS (BMP REST) — línea horizontal, sin apertura
+  labios_fuerza: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">'
+    // Labio superior
+    +'<path d="M18 43 Q40 34 60 36 Q80 34 102 43" stroke="#d63031" stroke-width="10" stroke-linecap="round" fill="none"/>'
+    // Labio inferior
+    +'<path d="M18 52 Q40 62 60 62 Q80 62 102 52" stroke="#d63031" stroke-width="10" stroke-linecap="round" fill="none"/>'
+    // Línea de cierre
+    +'<path d="M18 47 Q60 50 102 47" stroke="#8c0000" stroke-width="3" fill="none"/>'
+    // Flechas de presión vertical
+    +'<path d="M60 28 L60 36" stroke="#e63946" stroke-width="2.5" stroke-linecap="round"/>'
+    +'<polygon points="57,36 60,42 63,36" fill="#e63946"/>'
+    +'<path d="M60 70 L60 62" stroke="#e63946" stroke-width="2.5" stroke-linecap="round"/>'
+    +'<polygon points="57,62 60,56 63,62" fill="#e63946"/>'
+    +'<text x="5" y="96" font-size="9" fill="#e63946" font-family="sans-serif" font-weight="bold">LABIOS BIEN CERRADOS</text>'
+    +'</svg>',
+
+  // LENGUA FUERA (serpiente) — lengua larga saliendo hacia abajo
+  lengua_fuera: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">'
+    // Labio superior
+    +'<path d="M20 35 Q60 22 100 35" stroke="#d63031" stroke-width="11" stroke-linecap="round" fill="none"/>'
+    // Labio inferior
+    +'<path d="M20 50 Q60 62 100 50" stroke="#d63031" stroke-width="11" stroke-linecap="round" fill="none"/>'
+    // Interior boca
+    +'<path d="M22 37 Q60 25 98 37 Q98 52 60 62 Q22 52 22 37Z" fill="#5c0a0a"/>'
+    // Dientes arriba
+    +'<ellipse cx="60" cy="37" rx="28" ry="5.5" fill="white" opacity=".9"/>'
+    // Dientes abajo
+    +'<ellipse cx="60" cy="52" rx="25" ry="5" fill="white" opacity=".75"/>'
+    // Lengua larga saliendo
+    +'<path d="M48 50 Q60 56 72 50 Q74 65 72 78 Q66 85 60 85 Q54 85 48 78 Q46 65 48 50Z" fill="#e17055" stroke="#c0392b" stroke-width="1.2"/>'
+    +'<ellipse cx="60" cy="75" rx="10" ry="7" fill="#f0908a"/>'
+    // Flecha hacia abajo
+    +'<path d="M60 86 L60 93" stroke="#f4d35e" stroke-width="2" stroke-linecap="round"/>'
+    +'<polygon points="57,90 60,95 63,90" fill="#f4d35e"/>'
+    +'<text x="5" y="99" font-size="8" fill="#e63946" font-family="sans-serif" font-weight="bold">LENGUA HACIA FUERA</text>'
+    +'</svg>',
+
+  // LENGUA AL PALADAR — boca abierta, lengua curvada arriba tocando el techo
+  lengua_paladar: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg">'
+    // Labio superior
+    +'<path d="M18 33 Q60 18 102 33" stroke="#d63031" stroke-width="11" stroke-linecap="round" fill="none"/>'
+    // Labio inferior
+    +'<path d="M18 58 Q60 74 102 58" stroke="#d63031" stroke-width="11" stroke-linecap="round" fill="none"/>'
+    // Interior boca grande
+    +'<path d="M20 36 Q60 22 100 36 Q100 60 60 74 Q20 60 20 36Z" fill="#5c0a0a"/>'
+    // Paladar (techo boca) con punto de contacto marcado
+    +'<path d="M28 40 Q60 32 92 40" stroke="#8c3333" stroke-width="2" stroke-dasharray="3,2" fill="none"/>'
+    // Punto de contacto
+    +'<circle cx="60" cy="37" r="4" fill="#f4d35e"/>'
+    // Dientes arriba
+    +'<ellipse cx="60" cy="36" rx="28" ry="5" fill="white" opacity=".85"/>'
+    // Lengua curva subiendo y tocando el punto
+    +'<path d="M32 62 Q45 70 55 55 Q60 40 65 38 Q60 37 55 38 Q50 50 42 62 Q37 68 32 62Z" fill="#e17055"/>'
+    +'<path d="M32 62 Q38 55 48 52 Q56 48 62 38" stroke="#c0392b" stroke-width="1.5" fill="none"/>'
+    // Flecha hacia arriba
+    +'<path d="M60 50 L60 40" stroke="#f4d35e" stroke-width="2" stroke-linecap="round"/>'
+    +'<polygon points="57,42 60,36 63,42" fill="#f4d35e"/>'
+    +'<text x="3" y="96" font-size="8.5" fill="#f4d35e" font-family="sans-serif" font-weight="bold">LENGUA TOCA ARRIBA</text>'
+    +'</svg>',
+};
+
+var RUTINA = [
+  {
+    num:1, em:'😮‍💨', nom:'Soplar velas del portal',
+    rep:'5 repeticiones', desc:'Coge aire por la nariz y sopla muy fuerte por la boca',
+    porq:'Fortalece los musculos del soplo, clave para los sonidos P, B, F',
+    svg:'soplo',
+    como:'Pon la posicion de soplar',
+    pasos:'1. Coge aire lento por la nariz\n2. Labios juntos y un poco hacia adelante\n3. Sopla fuerte y largo\n4. Como si apagaras 5 velas de golpe\n5. Repite 5 veces',
+    truco:'Imagina que apagas las luces del Mundo del Reves soplando'
+  },
+  {
+    num:2, em:'👅', nom:'Lengua a los lados',
+    rep:'5 veces a cada lado', desc:'Lleva la punta de la lengua al lado derecho, pausa, y al lado izquierdo',
+    porq:'Mejora la movilidad lateral de la lengua para los sonidos L, R y N',
+    svg:'lengua_lados',
+    como:'Mueve la lengua de lado a lado',
+    pasos:'1. Abre la boca un poco\n2. Saca la punta de la lengua hacia la comisura derecha\n3. Aguanta 2 segundos\n4. Lleva al lado izquierdo\n5. Repite 5 veces cada lado despacio',
+    truco:'La lengua es un explorador que va de un lado al otro del portal'
+  },
+  {
+    num:3, em:'🐡', nom:'Mejillas de globo',
+    rep:'5 repeticiones de 3 segundos', desc:'Infla las dos mejillas a la vez como un globo y suelta el aire',
+    porq:'Trabaja la musculatura de las mejillas y el control del aire en la boca',
+    svg:'mejillas',
+    como:'Infla las mejillas con aire',
+    pasos:'1. Cierra bien la boca\n2. Infla las dos mejillas con aire a la vez\n3. Aguanta 3 segundos\n4. Suelta el aire despacio por los labios\n5. Descansa y repite 5 veces',
+    truco:'Como el pez globo del Mundo del Reves, hinchate todo lo que puedas'
+  },
+  {
+    num:4, em:'😁', nom:'La sonrisa de Eleven',
+    rep:'Mantener 3 segundos, 5 veces', desc:'Sonrie lo mas grande posible enseñando todos los dientes, luego pon cara neutra',
+    porq:'Ejercita los musculos faciales y activa los labios para la articulacion',
+    svg:'boca_abierta',
+    como:'Estira los labios hacia los lados',
+    pasos:'1. Empieza con la cara relajada\n2. Estira los labios hacia los lados como la sonrisa mas grande del mundo\n3. Enseña todos los dientes de arriba y abajo\n4. Aguanta 3 segundos\n5. Relaja y repite 5 veces',
+    truco:'Eleven sonrie cuando abre el portal, pon tu mejor sonrisa de superheroe'
+  },
+  {
+    num:5, em:'💋', nom:'Besos al espejo',
+    rep:'5 besos sonoros', desc:'Pon los labios en forma de beso y haz un sonido fuerte al juntar y separar',
+    porq:'Ejercita el cierre y apertura de labios, fundamental para P, B y M',
+    svg:'labios_beso',
+    como:'Labios juntos y redondeados hacia adelante',
+    pasos:'1. Junta los labios\n2. Empujalos un poco hacia adelante como para dar un beso\n3. Separa los labios haciendo un sonido fuerte: MUAK\n4. El sonido tiene que ser bien audible\n5. Repite 5 veces seguidas',
+    truco:'Manda un beso a Eleven a traves del portal, que lo oiga bien'
+  },
+  {
+    num:6, em:'😤', nom:'Fuerza de Eleven',
+    rep:'5 repeticiones de 5 segundos', desc:'Cierra los labios con mucha fuerza e hincha las mejillas, aguanta y suelta',
+    porq:'Desarrolla la fuerza y tonicidad de los labios para articular correctamente',
+    svg:'labios_fuerza',
+    como:'Labios juntos y muy apretados',
+    pasos:'1. Cierra los labios con toda tu fuerza\n2. Hincha un poco las mejillas\n3. Aguanta apretando 5 segundos\n4. Suelta de golpe\n5. Repite 5 veces',
+    truco:'Eleven aprieta los labios cuando usa sus poderes. Tu tambien tienes ese poder'
+  },
+  {
+    num:7, em:'🐍', nom:'La lengua serpiente',
+    rep:'5 veces despacio', desc:'Saca la lengua muy despacio hacia afuera y vuelvela a meter igual de despacio',
+    porq:'Desarrolla la precision y el control voluntario de los movimientos de la lengua',
+    svg:'lengua_fuera',
+    como:'Lengua que sale y entra muy despacio',
+    pasos:'1. Abre la boca un poco\n2. Saca la lengua MUY despacio, contando 3 segundos\n3. Cuando este fuera del todo, para un momento\n4. Metela de nuevo MUY despacio, contando 3 segundos\n5. Repite 5 veces sin prisa',
+    truco:'La serpiente del Mundo del Reves se mueve muy despacio. Tu lengua tambien'
+  },
+  {
+    num:8, em:'⬆️', nom:'Lengua al paladar',
+    rep:'5 repeticiones lentas', desc:'Sube la punta de la lengua al paladar justo detras de los dientes de arriba y baja',
+    porq:'Entrena la posicion exacta de la lengua para los sonidos L, N, T y D',
+    svg:'lengua_paladar',
+    como:'Punta de lengua sube al techo de la boca',
+    pasos:'1. Abre la boca un poco\n2. Sube la PUNTA de la lengua al techo de la boca\n3. Tocalo justo detras de los dientes de arriba\n4. Notaras un hueco rugoso, ahi es exactamente\n5. Baja la lengua y repite 5 veces',
+    truco:'La punta de la lengua es como el ascensor de la Torre de Hawkins: sube hasta arriba y baja'
+  },
+];
+
+var rutMrc=[];
+function initRut(){
+  rutMrc=RUTINA.map(function(){return false;});
+  renderRut();
+}
+function renderRut(){
+  var h='';
+  RUTINA.forEach(function(ej,i){
+    var d=rutMrc[i];
+    h+='<div class="rut-item'+(d?' done':'')+'" id="ri'+i+'">'
+      // Cabecera — siempre visible
+      +'<div class="rut-header" onclick="toggleRut('+i+')">'
+        +'<div class="rut-num">'+ej.num+'</div>'
+        +'<div class="rut-em">'+ej.em+'</div>'
+        +'<div class="rut-info">'
+          +'<h3>'+ej.nom+'</h3>'
+          +'<div class="rut-rep">'+ej.rep+'</div>'
+          +'<p>'+ej.desc+'</p>'
+        +'</div>'
+        +'<span class="rut-expand-lbl" id="re'+i+'">▼ Ver como</span>'
+        +'<button class="rut-ck" onclick="event.stopPropagation();mrcRut('+i+')">'+(d?'✅':'○')+'</button>'
+      +'</div>'
+      // Panel expandible con SVG
+      +'<div class="rut-panel" id="rp'+i+'">'
+        +'<div class="rut-panel-svg">'+RUT_SVG[ej.svg]+'</div>'
+        +'<div class="rut-panel-txt">'
+          +'<div class="rut-p-como">'+ej.como+'</div>'
+          +'<div class="rut-p-pasos">'+ej.pasos.replace(/\n/g,'<br>')+'</div>'
+          +'<div class="rut-p-truco">💡 '+ej.truco+'</div>'
+          +'<div class="porq" style="margin-top:5px">🎯 '+ej.porq+'</div>'
+        +'</div>'
+      +'</div>'
+    +'</div>';
+  });
+  document.getElementById('rut-list').innerHTML=h;
+  var hc=rutMrc.filter(function(v){return v;}).length;
+  document.getElementById('rut-bar').style.width=Math.round(hc/RUTINA.length*100)+'%';
+  document.getElementById('rut-lbl').textContent=hc+' de '+RUTINA.length+' ejercicios completados';
+  if(hc===RUTINA.length){
+    setRes('rut-res','ok','¡RUTINA COMPLETA! ¡Eres increible Claudia! +40 energia');
+    addPts(40);sonar('win');desblq('act_ok');
+    notif('¡RUTINA!','¡Todos los ejercicios hechos!','¡Eleven esta muy orgullosa!');
+    confeti();
+  } else setRes('rut-res','','');
+}
+function toggleRut(i){
+  var item=document.getElementById('ri'+i);
+  var lbl=document.getElementById('re'+i);
+  var abierto=item.classList.contains('abierto');
+  // Cerrar todos
+  RUTINA.forEach(function(_,j){
+    document.getElementById('ri'+j).classList.remove('abierto');
+    document.getElementById('re'+j).textContent='▼ Ver como';
+  });
+  if(!abierto){
+    item.classList.add('abierto');
+    lbl.textContent='▲ Cerrar';
+  }
+}
+function mrcRut(i){
+  if(rutMrc[i])return;
+  rutMrc[i]=true;sonar('ok');addPts(8);
+  renderRut();
+  // Abrir automaticamente el siguiente ejercicio
+  if(i+1<RUTINA.length&&!rutMrc[i+1]){
+    setTimeout(function(){toggleRut(i+1);},300);
+  }
+}
+function resetRut(){initRut();setRes('rut-res','','');}
+
+// FONEMAS
+var SERIES=[
+  {l:'A · E · I · O · U',       s:['A','E','I','O','U'],           t:'¡Las vocales! Abre bien la boca para cada una 👄'},
+  {l:'PA · PE · PI · PO · PU',  s:['PA','PE','PI','PO','PU'],      t:'Labios juntos y luego abre: PA PE PI PO PU 👄'},
+  {l:'TA · TE · TI · TO · TU',  s:['TA','TE','TI','TO','TU'],      t:'La lengua toca los dientes para la T 👅'},
+  {l:'MA · ME · MI · MO · MU',  s:['MA','ME','MI','MO','MU'],      t:'Cierra los labios para la M 💋'},
+  {l:'SA · SE · SI · SO · SU',  s:['SA','SE','SI','SO','SU'],      t:'La serpiente silba: ssssss 🐍'},
+  {l:'LA · LE · LI · LO · LU',  s:['LA','LE','LI','LO','LU'],      t:'La lengua sube al paladar para la L 🌟'},
+  {l:'NA · NE · NI · NO · NU',  s:['NA','NE','NI','NO','NU'],      t:'El aire sale por la nariz para la N 👃'},
+  {l:'BA · BE · BI · BO · BU',  s:['BA','BE','BI','BO','BU'],      t:'Los labios vibran suavemente para la B 💫'},
+  {l:'Combinaciones',            s:['PAPA','PATA','PAKA','TATA','BEBA'],t:'¡Combinaciones del laboratorio! ⚗️'},
+  {l:'Palabras mágicas',         s:['PATO','TAPA','POLO','MESA','BOTA'],t:'¡Palabras reales! ¡Lo estás haciendo genial! 🌟'},
+];
+function initFon(){S.fSIdx=0;S.fSiIdx=0;S.fEng=0;S.fonTotal=0;renderFon();renderBombillas();}
+// fEng: contador de la sesión actual (0-20, nunca baja)
+// fonTotal: total acumulado de todas las series (nunca se resetea)
+var FON_META=20; // bombillas totales para completar la misión
+var FON_COLORES=['#e63946','#f77f00','#f4d35e','#06d6a0','#457b9d','#7b2d8b','#fff','#e63946','#f77f00','#f4d35e','#06d6a0','#457b9d','#7b2d8b','#fff','#e63946','#f4d35e','#06d6a0','#f77f00','#7b2d8b','#fff'];
+
+function renderBombillas(){
+  var total=S.fonTotal||0;
+  var h='';
+  for(var i=0;i<FON_META;i++){
+    var enc=i<total;
+    h+='<div class="fbomb '+(enc?'on':'off')+'" style="'+(enc?'background:'+FON_COLORES[i]+';box-shadow:0 0 8px '+FON_COLORES[i]:'')+'"></div>';
+  }
+  document.getElementById('fon-bombillas').innerHTML=h;
+  document.getElementById('fc').textContent=Math.min(total,FON_META)+' / '+FON_META+' silabas';
+}
+
+function renderFon(){
+  var sr=SERIES[S.fSIdx];
+  document.getElementById('ftip').textContent=sr.t;
+  document.getElementById('fbig').textContent=sr.s[S.fSiIdx];
+  var h='';sr.s.forEach(function(sil,i){
+    h+='<button class="sb'+(i===S.fSiIdx?' ac':'')+'" onclick="selSil('+i+')">'+sil+'</button>';
+  });
+  document.getElementById('fsil').innerHTML=h;
+  renderGuia(sr.s[S.fSiIdx]);
+}
+
+// ===== GUIAS DE ARTICULACION =====
+// SVGs de boca/lengua dibujados inline, uno por grupo de fonema
+var SVG_BOCA = {
+  vocal_a: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg"><path d="M15 32 Q40 18 60 20 Q80 18 105 32" stroke="#d63031" stroke-width="12" stroke-linecap="round" fill="none"/><path d="M15 62 Q40 80 60 82 Q80 80 105 62" stroke="#d63031" stroke-width="12" stroke-linecap="round" fill="none"/><path d="M18 35 Q60 22 102 35 Q102 64 60 80 Q18 64 18 35Z" fill="#5c0a0a"/><ellipse cx="60" cy="70" rx="30" ry="9" fill="#e17055"/><ellipse cx="60" cy="67" rx="22" ry="6" fill="#f0908a"/><ellipse cx="60" cy="35" rx="32" ry="7" fill="white" opacity=".95"/><line x1="45" y1="29" x2="45" y2="41" stroke="#ddd" stroke-width="1.2"/><line x1="60" y1="28" x2="60" y2="42" stroke="#ddd" stroke-width="1.2"/><line x1="75" y1="29" x2="75" y2="41" stroke="#ddd" stroke-width="1.2"/><ellipse cx="60" cy="63" rx="28" ry="6" fill="white" opacity=".75"/><text x="30" y="97" font-size="11" fill="#e63946" font-family="sans-serif" font-weight="bold">VOCAL A</text></svg>',
+  vocal_e: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg"><path d="M10 38 Q35 24 60 26 Q85 24 110 38" stroke="#d63031" stroke-width="11" stroke-linecap="round" fill="none"/><path d="M10 52 Q35 64 60 65 Q85 64 110 52" stroke="#d63031" stroke-width="11" stroke-linecap="round" fill="none"/><path d="M12 40 Q60 28 108 40 Q108 54 60 64 Q12 54 12 40Z" fill="#5c0a0a"/><ellipse cx="60" cy="40" rx="36" ry="6" fill="white" opacity=".95"/><line x1="42" y1="34" x2="42" y2="46" stroke="#ddd" stroke-width="1.2"/><line x1="55" y1="34" x2="55" y2="46" stroke="#ddd" stroke-width="1.2"/><line x1="68" y1="34" x2="68" y2="46" stroke="#ddd" stroke-width="1.2"/><line x1="81" y1="34" x2="81" y2="46" stroke="#ddd" stroke-width="1.2"/><ellipse cx="60" cy="54" rx="30" ry="5.5" fill="white" opacity=".75"/><ellipse cx="60" cy="55" rx="22" ry="5" fill="#e17055"/><text x="30" y="97" font-size="11" fill="#e63946" font-family="sans-serif" font-weight="bold">VOCAL E</text></svg>',
+  vocal_i: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg"><path d="M8 42 Q35 30 60 32 Q85 30 112 42" stroke="#d63031" stroke-width="10" stroke-linecap="round" fill="none"/><path d="M8 52 Q35 62 60 63 Q85 62 112 52" stroke="#d63031" stroke-width="10" stroke-linecap="round" fill="none"/><path d="M10 44 Q60 33 110 44 Q110 54 60 62 Q10 54 10 44Z" fill="#5c0a0a"/><ellipse cx="60" cy="44" rx="38" ry="5" fill="white" opacity=".95"/><line x1="40" y1="39" x2="40" y2="49" stroke="#ddd" stroke-width="1.2"/><line x1="55" y1="39" x2="55" y2="49" stroke="#ddd" stroke-width="1.2"/><line x1="70" y1="39" x2="70" y2="49" stroke="#ddd" stroke-width="1.2"/><line x1="85" y1="39" x2="85" y2="49" stroke="#ddd" stroke-width="1.2"/><ellipse cx="60" cy="54" rx="33" ry="4.5" fill="white" opacity=".7"/><text x="35" y="97" font-size="11" fill="#e63946" font-family="sans-serif" font-weight="bold">VOCAL I</text></svg>',
+  vocal_o: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg"><path d="M30 32 Q48 18 60 18 Q72 18 90 32" stroke="#d63031" stroke-width="12" stroke-linecap="round" fill="none"/><path d="M30 65 Q48 80 60 80 Q72 80 90 65" stroke="#d63031" stroke-width="12" stroke-linecap="round" fill="none"/><path d="M20 42 Q22 25 60 20 Q98 25 100 42 Q100 72 60 80 Q20 72 20 42Z" fill="#5c0a0a"/><ellipse cx="60" cy="35" rx="22" ry="6" fill="white" opacity=".9"/><ellipse cx="60" cy="68" rx="20" ry="5.5" fill="white" opacity=".75"/><ellipse cx="60" cy="62" rx="14" ry="8" fill="#e17055"/><ellipse cx="60" cy="60" rx="10" ry="5" fill="#f0908a"/><text x="30" y="97" font-size="11" fill="#e63946" font-family="sans-serif" font-weight="bold">VOCAL O</text></svg>',
+  vocal_u: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg"><path d="M38 36 Q52 22 60 22 Q68 22 82 36" stroke="#d63031" stroke-width="12" stroke-linecap="round" fill="none"/><path d="M38 60 Q52 76 60 76 Q68 76 82 60" stroke="#d63031" stroke-width="12" stroke-linecap="round" fill="none"/><ellipse cx="60" cy="48" rx="18" ry="18" fill="#5c0a0a"/><ellipse cx="60" cy="38" rx="12" ry="5" fill="white" opacity=".85"/><ellipse cx="60" cy="60" rx="11" ry="4.5" fill="white" opacity=".7"/><ellipse cx="60" cy="52" rx="8" ry="8" fill="#e17055"/><ellipse cx="60" cy="50" rx="5" ry="5" fill="#f0908a"/><text x="30" y="97" font-size="11" fill="#e63946" font-family="sans-serif" font-weight="bold">VOCAL U</text></svg>',
+  cerrada: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg"><path d="M15 40 Q40 28 60 30 Q80 28 105 40" stroke="#d63031" stroke-width="11" stroke-linecap="round" fill="none"/><path d="M15 54 Q40 66 60 66 Q80 66 105 54" stroke="#d63031" stroke-width="11" stroke-linecap="round" fill="none"/><path d="M15 47 Q60 50 105 47" stroke="#8c0000" stroke-width="3" fill="none"/><path d="M60 22 L60 30" stroke="#f4d35e" stroke-width="2.5" stroke-linecap="round"/><polygon points="57,30 60,36 63,30" fill="#f4d35e"/><path d="M60 72 L60 64" stroke="#f4d35e" stroke-width="2.5" stroke-linecap="round"/><polygon points="57,64 60,58 63,64" fill="#f4d35e"/><text x="10" y="97" font-size="9.5" fill="#f4d35e" font-family="sans-serif" font-weight="bold">LABIOS CERRADOS</text></svg>',
+  lengua_dientes: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg"><path d="M18 33 Q60 18 102 33" stroke="#d63031" stroke-width="11" stroke-linecap="round" fill="none"/><path d="M18 56 Q60 72 102 56" stroke="#d63031" stroke-width="11" stroke-linecap="round" fill="none"/><path d="M20 36 Q60 22 100 36 Q100 58 60 70 Q20 58 20 36Z" fill="#5c0a0a"/><ellipse cx="60" cy="36" rx="30" ry="6" fill="white" opacity=".95"/><line x1="44" y1="30" x2="44" y2="42" stroke="#ddd" stroke-width="1.2"/><line x1="58" y1="30" x2="58" y2="42" stroke="#ddd" stroke-width="1.2"/><line x1="72" y1="30" x2="72" y2="42" stroke="#ddd" stroke-width="1.2"/><ellipse cx="60" cy="57" rx="26" ry="5.5" fill="white" opacity=".7"/><path d="M38 56 Q50 62 60 56 Q70 62 82 56 Q80 48 70 44 Q60 43 50 44 Q40 48 38 56Z" fill="#e17055"/><ellipse cx="60" cy="52" rx="18" ry="7" fill="#f0908a"/><circle cx="60" cy="43" r="4" fill="#f4d35e"/><text x="5" y="97" font-size="9" fill="#f4d35e" font-family="sans-serif" font-weight="bold">LENGUA DETRAS DIENTES</text></svg>',
+  lengua_arriba: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg"><path d="M18 33 Q60 18 102 33" stroke="#d63031" stroke-width="11" stroke-linecap="round" fill="none"/><path d="M18 57 Q60 73 102 57" stroke="#d63031" stroke-width="11" stroke-linecap="round" fill="none"/><path d="M20 36 Q60 22 100 36 Q100 59 60 72 Q20 59 20 36Z" fill="#5c0a0a"/><ellipse cx="60" cy="36" rx="29" ry="6" fill="white" opacity=".95"/><line x1="44" y1="30" x2="44" y2="42" stroke="#ddd" stroke-width="1.2"/><line x1="60" y1="30" x2="60" y2="42" stroke="#ddd" stroke-width="1.2"/><line x1="76" y1="30" x2="76" y2="42" stroke="#ddd" stroke-width="1.2"/><ellipse cx="60" cy="58" rx="25" ry="5" fill="white" opacity=".7"/><path d="M34 60 Q45 66 55 52 Q60 42 65 40 Q60 38 55 40 Q48 50 40 60 Q37 64 34 60Z" fill="#e17055"/><circle cx="63" cy="40" r="4.5" fill="#f4d35e"/><path d="M63 38 L63 28" stroke="#f4d35e" stroke-width="2" stroke-linecap="round"/><polygon points="60,30 63,24 66,30" fill="#f4d35e"/><text x="8" y="97" font-size="9" fill="#f4d35e" font-family="sans-serif" font-weight="bold">LENGUA TOCA PALADAR</text></svg>',
+  soplando: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg"><path d="M18 38 Q60 24 102 38" stroke="#d63031" stroke-width="10" stroke-linecap="round" fill="none"/><path d="M18 52 Q60 66 102 52" stroke="#d63031" stroke-width="10" stroke-linecap="round" fill="none"/><path d="M20 40 Q60 27 100 40 Q100 54 60 64 Q20 54 20 40Z" fill="#5c0a0a"/><ellipse cx="60" cy="40" rx="30" ry="5.5" fill="white" opacity=".95"/><line x1="44" y1="35" x2="44" y2="46" stroke="#ddd" stroke-width="1.2"/><line x1="58" y1="34" x2="58" y2="46" stroke="#ddd" stroke-width="1.2"/><line x1="72" y1="35" x2="72" y2="46" stroke="#ddd" stroke-width="1.2"/><ellipse cx="60" cy="53" rx="26" ry="5" fill="white" opacity=".7"/><ellipse cx="60" cy="58" rx="20" ry="5" fill="#e17055"/><path d="M104 36 Q112 33 119 35" stroke="#06d6a0" stroke-width="2.2" stroke-linecap="round" fill="none"/><path d="M104 43 Q113 41 119 43" stroke="#06d6a0" stroke-width="2" stroke-linecap="round" fill="none"/><path d="M104 50 Q112 49 119 51" stroke="#06d6a0" stroke-width="1.8" stroke-linecap="round" fill="none"/><text x="5" y="97" font-size="9" fill="#06d6a0" font-family="sans-serif" font-weight="bold">DIENTES CASI JUNTOS</text></svg>',
+  nasal: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg"><path d="M15 42 Q40 30 60 32 Q80 30 105 42" stroke="#d63031" stroke-width="11" stroke-linecap="round" fill="none"/><path d="M15 54 Q40 66 60 66 Q80 66 105 54" stroke="#d63031" stroke-width="11" stroke-linecap="round" fill="none"/><path d="M15 48 Q60 50 105 48" stroke="#8c0000" stroke-width="3" fill="none"/><ellipse cx="45" cy="25" rx="9" ry="11" fill="none" stroke="#f4d35e" stroke-width="2"/><ellipse cx="75" cy="25" rx="9" ry="11" fill="none" stroke="#f4d35e" stroke-width="2"/><path d="M40 14 Q45 8 50 14" stroke="#06d6a0" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M70 14 Q75 8 80 14" stroke="#06d6a0" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M20 58 Q25 55 30 58 Q35 61 40 58" stroke="#f77f00" stroke-width="1.8" fill="none"/><path d="M80 58 Q85 55 90 58 Q95 61 100 58" stroke="#f77f00" stroke-width="1.8" fill="none"/><text x="5" y="97" font-size="9" fill="#06d6a0" font-family="sans-serif" font-weight="bold">AIRE POR LA NARIZ</text></svg>',
+  abierta: '<svg viewBox="0 0 120 100" xmlns="http://www.w3.org/2000/svg"><path d="M15 32 Q40 18 60 20 Q80 18 105 32" stroke="#d63031" stroke-width="12" stroke-linecap="round" fill="none"/><path d="M15 62 Q40 80 60 82 Q80 80 105 62" stroke="#d63031" stroke-width="12" stroke-linecap="round" fill="none"/><path d="M18 35 Q60 22 102 35 Q102 64 60 80 Q18 64 18 35Z" fill="#5c0a0a"/><ellipse cx="60" cy="70" rx="30" ry="9" fill="#e17055"/><ellipse cx="60" cy="67" rx="22" ry="6" fill="#f0908a"/><ellipse cx="60" cy="35" rx="32" ry="7" fill="white" opacity=".95"/><line x1="45" y1="29" x2="45" y2="41" stroke="#ddd" stroke-width="1.2"/><line x1="60" y1="28" x2="60" y2="42" stroke="#ddd" stroke-width="1.2"/><line x1="75" y1="29" x2="75" y2="41" stroke="#ddd" stroke-width="1.2"/><ellipse cx="60" cy="63" rx="28" ry="6" fill="white" opacity=".75"/></svg>',
+}
+
+// Mapa fonema -> guía. Clave = primera(s) letra(s) del fonema
+var GUIAS_FON = {
+  'A': {svg:'vocal_a', tit:'VOCAL A', paso:'Boca muy abierta, lengua abajo y atrás. Mandibula baja al maximo.', truco:'Imagina que el medico te mira la garganta: ¡AAAA!'},
+  'E': {svg:'vocal_e', tit:'VOCAL E', paso:'Boca semiabierta y estirada hacia los lados como una sonrisa.', truco:'Es como si mostraras los dientes de lado: ehhh'},
+  'I': {svg:'vocal_i', tit:'VOCAL I', paso:'Labios muy estirados hacia los lados, boca casi cerrada.', truco:'Pon cara de "que asco" estirada: iiiii'},
+  'O': {svg:'vocal_o', tit:'VOCAL O', paso:'Labios en forma de circulo redondo. Boca abierta hacia abajo.', truco:'Como si soplaras una vela lentamente: ooooo'},
+  'U': {svg:'vocal_u', tit:'VOCAL U', paso:'Labios muy juntos y redondeados hacia adelante, como un tubo.', truco:'Como dar un beso de lejos: uuuuu'},
+  'PA': {svg:'cerrada', tit:'SONIDO P', paso:'Cierra los labios con fuerza. Suelta el aire de golpe: ¡POP!', truco:'Como un globo que explota. Labios juntos y... ¡POP!'},
+  'PE': {svg:'cerrada', tit:'SONIDO P', paso:'Cierra los labios con fuerza. Suelta el aire de golpe: ¡POP!', truco:'Como un globo que explota. Labios juntos y... ¡POP!'},
+  'PI': {svg:'cerrada', tit:'SONIDO P', paso:'Cierra los labios con fuerza. Suelta el aire de golpe: ¡POP!', truco:'Como un globo que explota. Labios juntos y... ¡POP!'},
+  'PO': {svg:'cerrada', tit:'SONIDO P', paso:'Cierra los labios con fuerza. Suelta el aire de golpe: ¡POP!', truco:'Como un globo que explota. Labios juntos y... ¡POP!'},
+  'PU': {svg:'cerrada', tit:'SONIDO P', paso:'Cierra los labios con fuerza. Suelta el aire de golpe: ¡POP!', truco:'Como un globo que explota. Labios juntos y... ¡POP!'},
+  'TA': {svg:'lengua_dientes', tit:'SONIDO T', paso:'Punta de la lengua detras de los dientes de arriba. Suelta el aire rapido.', truco:'La lengua toca el techo justo detras de los dientes y cae: TA'},
+  'TE': {svg:'lengua_dientes', tit:'SONIDO T', paso:'Punta de la lengua detras de los dientes de arriba. Suelta el aire rapido.', truco:'La lengua toca el techo justo detras de los dientes y cae: TE'},
+  'TI': {svg:'lengua_dientes', tit:'SONIDO T', paso:'Punta de la lengua detras de los dientes de arriba. Suelta el aire rapido.', truco:'La lengua toca el techo justo detras de los dientes y cae: TI'},
+  'TO': {svg:'lengua_dientes', tit:'SONIDO T', paso:'Punta de la lengua detras de los dientes de arriba. Suelta el aire rapido.', truco:'La lengua toca el techo justo detras de los dientes y cae: TO'},
+  'TU': {svg:'lengua_dientes', tit:'SONIDO T', paso:'Punta de la lengua detras de los dientes de arriba. Suelta el aire rapido.', truco:'La lengua toca el techo justo detras de los dientes y cae: TU'},
+  'MA': {svg:'nasal', tit:'SONIDO M', paso:'Labios bien cerrados. El aire sale por la NARIZ haciendo mmm...', truco:'Es como tararear con la boca cerrada: mmmm'},
+  'ME': {svg:'nasal', tit:'SONIDO M', paso:'Labios bien cerrados. El aire sale por la NARIZ haciendo mmm...', truco:'Es como tararear con la boca cerrada: mmmm'},
+  'MI': {svg:'nasal', tit:'SONIDO M', paso:'Labios bien cerrados. El aire sale por la NARIZ haciendo mmm...', truco:'Es como tararear con la boca cerrada: mmmm'},
+  'MO': {svg:'nasal', tit:'SONIDO M', paso:'Labios bien cerrados. El aire sale por la NARIZ haciendo mmm...', truco:'Es como tararear con la boca cerrada: mmmm'},
+  'MU': {svg:'nasal', tit:'SONIDO M', paso:'Labios bien cerrados. El aire sale por la NARIZ haciendo mmm...', truco:'Es como tararear con la boca cerrada: mmmm'},
+  'SA': {svg:'soplando', tit:'SONIDO S', paso:'Dientes casi juntos, lengua abajo. Sopla aire por el centro: ssss', truco:'Como la serpiente del Mundo del Reves: ssssss'},
+  'SE': {svg:'soplando', tit:'SONIDO S', paso:'Dientes casi juntos, lengua abajo. Sopla aire por el centro: ssss', truco:'Como la serpiente del Mundo del Reves: ssssss'},
+  'SI': {svg:'soplando', tit:'SONIDO S', paso:'Dientes casi juntos, lengua abajo. Sopla aire por el centro: ssss', truco:'Como la serpiente del Mundo del Reves: ssssss'},
+  'SO': {svg:'soplando', tit:'SONIDO S', paso:'Dientes casi juntos, lengua abajo. Sopla aire por el centro: ssss', truco:'Como la serpiente del Mundo del Reves: ssssss'},
+  'SU': {svg:'soplando', tit:'SONIDO S', paso:'Dientes casi juntos, lengua abajo. Sopla aire por el centro: ssss', truco:'Como la serpiente del Mundo del Reves: ssssss'},
+  'LA': {svg:'lengua_arriba', tit:'SONIDO L', paso:'Punta de la lengua SUBE y toca el paladar, justo detras de los dientes de arriba.', truco:'La lengua sube como un ascensor y baja: L-A'},
+  'LE': {svg:'lengua_arriba', tit:'SONIDO L', paso:'Punta de la lengua SUBE y toca el paladar, justo detras de los dientes de arriba.', truco:'La lengua sube como un ascensor y baja: L-E'},
+  'LI': {svg:'lengua_arriba', tit:'SONIDO L', paso:'Punta de la lengua SUBE y toca el paladar, justo detras de los dientes de arriba.', truco:'La lengua sube como un ascensor y baja: L-I'},
+  'LO': {svg:'lengua_arriba', tit:'SONIDO L', paso:'Punta de la lengua SUBE y toca el paladar, justo detras de los dientes de arriba.', truco:'La lengua sube como un ascensor y baja: L-O'},
+  'LU': {svg:'lengua_arriba', tit:'SONIDO L', paso:'Punta de la lengua SUBE y toca el paladar, justo detras de los dientes de arriba.', truco:'La lengua sube como un ascensor y baja: L-U'},
+  'NA': {svg:'nasal', tit:'SONIDO N', paso:'Lengua arriba tocando el paladar. Aire por la NARIZ mientras vibra: nnnn', truco:'Como tararear pero con la lengua arriba: nnnnn'},
+  'NE': {svg:'nasal', tit:'SONIDO N', paso:'Lengua arriba tocando el paladar. Aire por la NARIZ mientras vibra: nnnn', truco:'Como tararear pero con la lengua arriba: nnnnn'},
+  'NI': {svg:'nasal', tit:'SONIDO N', paso:'Lengua arriba tocando el paladar. Aire por la NARIZ mientras vibra: nnnn', truco:'Como tararear pero con la lengua arriba: nnnnn'},
+  'NO': {svg:'nasal', tit:'SONIDO N', paso:'Lengua arriba tocando el paladar. Aire por la NARIZ mientras vibra: nnnn', truco:'Como tararear pero con la lengua arriba: nnnnn'},
+  'NU': {svg:'nasal', tit:'SONIDO N', paso:'Lengua arriba tocando el paladar. Aire por la NARIZ mientras vibra: nnnn', truco:'Como tararear pero con la lengua arriba: nnnnn'},
+  'BA': {svg:'cerrada', tit:'SONIDO B', paso:'Labios juntos pero sin presion fuerte. Vibran al soltar: mmm-BA', truco:'Como la P pero mas suave. Los labios vibran como una abeja: bzzz'},
+  'BE': {svg:'cerrada', tit:'SONIDO B', paso:'Labios juntos pero sin presion fuerte. Vibran al soltar: mmm-BE', truco:'Como la P pero mas suave. Los labios vibran como una abeja: bzzz'},
+  'BI': {svg:'cerrada', tit:'SONIDO B', paso:'Labios juntos pero sin presion fuerte. Vibran al soltar: mmm-BI', truco:'Como la P pero mas suave. Los labios vibran como una abeja: bzzz'},
+  'BO': {svg:'cerrada', tit:'SONIDO B', paso:'Labios juntos pero sin presion fuerte. Vibran al soltar: mmm-BO', truco:'Como la P pero mas suave. Los labios vibran como una abeja: bzzz'},
+  'BU': {svg:'cerrada', tit:'SONIDO B', paso:'Labios juntos pero sin presion fuerte. Vibran al soltar: mmm-BU', truco:'Como la P pero mas suave. Los labios vibran como una abeja: bzzz'},
+  // Combinaciones y palabras: guia generica
+  'PAPA': {svg:'cerrada', tit:'COMBINACION PA-PA', paso:'Dos veces P seguidas. Labios se cierran y abren dos veces.', truco:'Como dos besos con la boca: PA... PA'},
+  'PATA': {svg:'cerrada', tit:'COMBINACION PA-TA', paso:'Primero labios cerrados para PA, luego lengua arriba para TA.', truco:'Labios... lengua: PA-TA'},
+  'PAKA': {svg:'cerrada', tit:'COMBINACION PA-KA', paso:'PA: labios. KA: lengua atras en el paladar blando.', truco:'Delante... atras: PA-KA'},
+  'TATA': {svg:'lengua_dientes', tit:'COMBINACION TA-TA', paso:'Lengua toca y suelta los dientes dos veces seguidas.', truco:'Lengua sube y baja dos veces: TA-TA'},
+  'BEBA': {svg:'cerrada', tit:'COMBINACION BE-BA', paso:'Labios vibran suavemente en ambas silabas.', truco:'Labios suaves como una abeja: BE-BA'},
+  'PATO': {svg:'cerrada', tit:'PATO', paso:'PA: labios. TO: lengua toca detras de dientes y boca redonda.', truco:'El pato del Mundo del Reves: PA-TO'},
+  'TAPA': {svg:'lengua_dientes', tit:'TAPA', paso:'TA: lengua arriba. PA: labios cerrados.', truco:'Lengua... labios: TA-PA'},
+  'POLO': {svg:'cerrada', tit:'POLO', paso:'PO: labios y boca redonda. LO: lengua arriba y boca redonda.', truco:'Labios... lengua arriba: PO-LO'},
+  'MESA': {svg:'nasal', tit:'MESA', paso:'ME: labios con nariz. SA: dientes juntos con aire.', truco:'Nariz... serpiente: ME-SA'},
+  'BOTA': {svg:'cerrada', tit:'BOTA', paso:'BO: labios suaves y boca redonda. TA: lengua detras de dientes.', truco:'Labios suaves... lengua: BO-TA'},
+};
+
+// ===== SISTEMA DE IMAGENES POR LETRA =====
+// Cada sílaba se descompone en sus letras individuales
+// Cada letra tiene su propia imagen: A.jpg, E.jpg, P.jpg, T.jpg, etc.
+
+var IMG_BASE = './imagenes/';
+var IMG_EXT  = '.jpg';
+
+// Descompone una sílaba en sus letras individuales para mostrar imagen por letra
+// PA → ['P','A']   A → ['A']   PATO → ['P','A','T','O']
+// Reglas: consonante(s) + vocal
+var DESCOMP = {
+  // Vocales solas
+  'A':['A'],'E':['E'],'I':['I'],'O':['O'],'U':['U'],
+  // Serie PA
+  'PA':['P','A'],'PE':['P','E'],'PI':['P','I'],'PO':['P','O'],'PU':['P','U'],
+  // Serie TA
+  'TA':['T','A'],'TE':['T','E'],'TI':['T','I'],'TO':['T','O'],'TU':['T','U'],
+  // Serie MA
+  'MA':['M','A'],'ME':['M','E'],'MI':['M','I'],'MO':['M','O'],'MU':['M','U'],
+  // Serie SA
+  'SA':['S','A'],'SE':['S','E'],'SI':['S','I'],'SO':['S','O'],'SU':['S','U'],
+  // Serie LA
+  'LA':['L','A'],'LE':['L','E'],'LI':['L','I'],'LO':['L','O'],'LU':['L','U'],
+  // Serie NA
+  'NA':['N','A'],'NE':['N','E'],'NI':['N','I'],'NO':['N','O'],'NU':['N','U'],
+  // Serie BA
+  'BA':['B','A'],'BE':['B','E'],'BI':['B','I'],'BO':['B','O'],'BU':['B','U'],
+  // Combinaciones — dos sílabas, se parte en dos filas de 2
+  'PAPA':['P','A','P','A'],
+  'PATA':['P','A','T','A'],
+  'PAKA':['P','A','K','A'],
+  'TATA':['T','A','T','A'],
+  'BEBA':['B','E','B','A'],
+  // Palabras — dos sílabas, se parte en dos filas de 2
+  'PATO':['P','A','T','O'],
+  'TAPA':['T','A','P','A'],
+  'POLO':['P','O','L','O'],
+  'MESA':['M','E','S','A'],
+  'BOTA':['B','O','T','A'],
+};
+
+// Construye una celda: imagen si existe, placeholder si no
+function _celda(letra){
+  var url = IMG_BASE + letra + IMG_EXT;
+  var cell = document.createElement('div');
+  cell.className = 'fon-letra-cell';
+  // Etiqueta con la letra
+  var lbl = document.createElement('div');
+  lbl.className = 'fon-letra-lbl';
+  lbl.textContent = letra;
+  cell.appendChild(lbl);
+  // Intentar cargar imagen
+  var img = document.createElement('img');
+  img.className = 'fon-letra-img';
+  img.alt = letra;
+  img.onload = function(){ /* imagen cargada OK */ };
+  img.onerror = function(){
+    // No existe la imagen → mostrar placeholder
+    var ph = document.createElement('div');
+    ph.className = 'fon-letra-ph';
+    ph.textContent = letra + '\nsin imagen';
+    cell.replaceChild(ph, img);
+  };
+  img.src = url;
+  cell.appendChild(img);
+  return cell;
+}
+
+function renderGuia(silaba){
+  var sil   = silaba.toUpperCase();
+  var guia  = GUIAS_FON[sil];
+  var letras= DESCOMP[sil] || sil.split('');
+
+  var grid = document.getElementById('fon-letras-grid');
+  var tip  = document.getElementById('fon-tip-box');
+  if(!grid) return;
+
+  grid.innerHTML = '';
+
+  if(letras.length <= 2){
+    // Una sola fila (vocales o sílabas simples: A, PA, TA...)
+    var fila = document.createElement('div');
+    fila.className = 'fon-fila';
+    letras.forEach(function(l){ fila.appendChild(_celda(l)); });
+    grid.appendChild(fila);
+  } else {
+    // Dos sílabas (4 letras) → dos filas de 2
+    // Fila 1: primera sílaba
+    var f1 = document.createElement('div');
+    f1.className = 'fon-fila';
+    letras.slice(0,2).forEach(function(l){ f1.appendChild(_celda(l)); });
+    grid.appendChild(f1);
+    // Fila 2: segunda sílaba
+    var f2 = document.createElement('div');
+    f2.className = 'fon-fila';
+    letras.slice(2).forEach(function(l){ f2.appendChild(_celda(l)); });
+    grid.appendChild(f2);
+  }
+
+  // Tip de articulación
+  if(guia){
+    tip.className = 'fon-tip-box visible';
+    tip.innerHTML =
+      '<div class="ftb-tit">' + guia.tit + '</div>' +
+      '<div class="ftb-paso">' + guia.paso + '</div>' +
+      '<div class="ftb-truco">💡 ' + guia.truco + '</div>';
+  } else {
+    tip.className = 'fon-tip-box';
+  }
+}
+var fonMute=false;
+function toggleMute(){
+  fonMute=!fonMute;
+  var btn=document.getElementById('fon-mute-btn');
+  if(fonMute){btn.textContent='🔇 Voz desactivada';btn.style.borderColor='var(--rojo)';btn.style.color='var(--rojo)';}
+  else{btn.textContent='🔊 Voz activada';btn.style.borderColor='var(--borde)';btn.style.color='var(--texto)';}
+  if(window.speechSynthesis)window.speechSynthesis.cancel();
+}
+function selSil(i){S.fSiIdx=i;renderFon();playF();}
+var _voicesReady=false;
+function _loadVoices(){
+  if(window.speechSynthesis){
+    var v=window.speechSynthesis.getVoices();
+    if(v&&v.length>0)_voicesReady=true;
+  }
+}
+if(window.speechSynthesis){
+  _loadVoices();
+  if(window.speechSynthesis.onvoiceschanged!==undefined){
+    window.speechSynthesis.onvoiceschanged=_loadVoices;
+  }
+}
+function playF(){
+  var el=document.getElementById('fbig');
+  if(el){el.style.transform='scale(1.2)';setTimeout(function(){el.style.transform='';},210);}
+  if(fonMute)return;
+  try{
+    if(!window.speechSynthesis)return;
+    var sr=SERIES[S.fSIdx];
+    if(!sr)return;
+    var txt=sr.s[S.fSiIdx];
+    if(!txt)return;
+    txt=txt.toLowerCase();
+    window.speechSynthesis.cancel();
+    setTimeout(function(){
+      try{
+        var u=new SpeechSynthesisUtterance(txt);
+        u.lang='es-ES';u.rate=0.57;u.pitch=1.1;u.volume=1;
+        window.speechSynthesis.speak(u);
+      }catch(e){}
+    },100);
+  }catch(e){}
+}
+function fonOk(){
+  // Avanzar sílaba dentro de la serie actual
+  S.fSiIdx=(S.fSiIdx+1)%SERIES[S.fSIdx].s.length;
+  // Contador global acumulativo — NUNCA baja
+  if(!S.fonTotal)S.fonTotal=0;
+  if(S.fonTotal<FON_META){
+    S.fonTotal++;
+    // Encender la nueva bombilla con animación
+    var bombs=document.getElementById('fon-bombillas');
+    if(bombs){
+      var divs=bombs.querySelectorAll('.fbomb');
+      var idx=S.fonTotal-1;
+      if(divs[idx]){
+        divs[idx].className='fbomb on nueva';
+        divs[idx].style.background=FON_COLORES[idx];
+        divs[idx].style.boxShadow='0 0 10px '+FON_COLORES[idx];
+        // Quitar clase nueva después de la animación
+        (function(el){setTimeout(function(){el.classList.remove('nueva');},450);})(divs[idx]);
+      }
+    }
+    document.getElementById('fc').textContent=S.fonTotal+' / '+FON_META+' silabas';
+  }
+  addPts(8);sonar('ok');desblq('first_fon');
+  var ms=['¡Perfecto!','¡Genial!','¡Increible!','¡Sigue asi!','¡Eres la mejor!'];
+  setRes('fon-res','ok',ms[Math.floor(Math.random()*ms.length)]);
+  // Portal al completar todas las bombillas
+  if(S.fonTotal>=FON_META){
+    desblq('fon10');sonar('portal');
+    setRes('fon-res','ok','¡MISION FONEMAS COMPLETADA! ¡Campeona! +50 energia');
+    addPts(50);
+    var p=document.getElementById('prt');p.classList.add('ab');
+    notif('¡FONEMAS!','¡Todas las bombillas encendidas!','¡Increible Claudia!');
+    confeti();
+    setTimeout(function(){p.classList.remove('ab');},3000);
+    // Reiniciar para poder seguir jugando
+    S.fonTotal=0;renderBombillas();
+  }
+  renderFon();
+}
+function nextSerie(){
+  // Cambia de serie SIN tocar el contador de bombillas
+  S.fSIdx=(S.fSIdx+1)%SERIES.length;
+  S.fSiIdx=0;
+  sonar('tick');renderFon();
+  setRes('fon-res','ok','Serie: '+SERIES[S.fSIdx].l);
+}
+
+// SECUENCIAS
+var SQTP=[
+  {i:['🔴','🔵','🟡','🟢','🟠','🟣']},{i:['⭐','🔺','🔶','🔷','💎','🌙']},
+  {i:['🐱','🐶','🐸','🐭','🦊','🐻']},{i:['1️⃣','2️⃣','3️⃣','4️⃣','5️⃣','6️⃣']},
+  {i:['🌸','🌻','🌺','🌷','🌼','🌹']},
+];
+var sqAc=0;
+function newSeq(){
+  var tp=SQTP[Math.floor(Math.random()*SQTP.length)];
+  var pool=tp.i.slice().sort(function(){return Math.random()-.5;}).slice(0,3);
+  var len=3+Math.floor(Math.random()*2),seq=[];
+  for(var i=0;i<len;i++)seq.push(pool[i%pool.length]);
+  var ans=pool[len%pool.length];
+  document.getElementById('sq-p').textContent='Mira bien el patrón:';
+  document.getElementById('sq-s').innerHTML=seq.map(function(s){return '<div class="si">'+s+'</div>';}).join('');
+  document.getElementById('sq-p2').textContent='¿Qué viene después? 👇';
+  var wr=tp.i.filter(function(x){return pool.indexOf(x)<0;}).sort(function(){return Math.random()-.5;}).slice(0,2);
+  var opts=[ans].concat(wr).sort(function(){return Math.random()-.5;});
+  // Guardamos opciones en variables globales seguras, NO en propiedades del DOM
+  window._seqOpts=opts;
+  window._seqAns=ans;
+  document.getElementById('sq-o').innerHTML=opts.map(function(o,idx){
+    return '<div class="so" data-idx="'+idx+'" onclick="chkSeq(this)">'+o+'</div>';
+  }).join('');
+  setRes('sq-res','','');
+}
+function chkSeq(el){
+  var idx=parseInt(el.getAttribute('data-idx'));
+  var ch=window._seqOpts[idx];
+  var co=window._seqAns;
+  if(ch===co){sqAc++;addPts(10);sonar('ok');setRes('sq-res','ok','¡Correcto! +10 energia');
+    el.style.borderColor='var(--verde)';if(sqAc>=5)desblq('seq5');setTimeout(newSeq,1100);
+  } else {sonar('err');resetRacha();setRes('sq-res','mal','¡Casi! Mira el patron de nuevo');
+    el.style.borderColor='var(--rojo)';el.style.animation='shake .4s ease';}
+}
+
+// MOTRICIDAD
+var FIGS=[
+  {n:'🏠 Casa',p:[[50,85],[80,85],[80,55],[65,32],[50,55],[35,32],[20,55],[20,85]]},
+  {n:'⭐ Estrella',p:[[50,12],[61,38],[88,38],[68,58],[78,88],[50,70],[22,88],[32,58],[12,38],[39,38]]},
+  {n:'🌙 Luna',p:[[35,15],[62,25],[78,50],[62,75],[35,85],[52,68],[62,50],[52,32]]},
+  {n:'🐟 Pez',p:[[15,50],[32,28],[58,18],[80,50],[58,82],[32,72],[15,50],[32,50]]},
+  {n:'💎 Diamante',p:[[50,10],[85,50],[50,90],[15,50]]},
+  {n:'🚀 Cohete',p:[[50,10],[65,35],[65,75],[55,85],[45,85],[35,75],[35,35]]},
+];
+var figA=null,sigP=0,lins=[];
+function newDots(){figA=FIGS[Math.floor(Math.random()*FIGS.length)];sigP=0;lins=[];
+  document.getElementById('mfb').textContent='Conecta los puntos de: '+figA.n;renderDots();}
+function renderDots(){
+  var wr=document.getElementById('dw'),sv=document.getElementById('dSvg');
+  var w=wr.offsetWidth||360,h=320;
+  Array.from(wr.querySelectorAll('.dot')).forEach(function(d){d.remove();});sv.innerHTML='';
+  lins.forEach(function(par){var a=figA.p[par[0]],b=figA.p[par[1]];
+    var ln=document.createElementNS('http://www.w3.org/2000/svg','line');
+    ln.setAttribute('x1',a[0]/100*w);ln.setAttribute('y1',a[1]/100*h);
+    ln.setAttribute('x2',b[0]/100*w);ln.setAttribute('y2',b[1]/100*h);
+    ln.setAttribute('stroke','var(--verde)');ln.setAttribute('stroke-width','3.5');ln.setAttribute('stroke-linecap','round');
+    sv.appendChild(ln);
+  });
+  figA.p.forEach(function(pt,i){
+    var el=document.createElement('div');
+    el.className='dot'+(i===sigP?' nd':i<sigP?' dd':'');
+    el.style.left=pt[0]+'%';el.style.top=pt[1]+'%';el.textContent=String(i+1);
+    (function(idx){el.onclick=function(){tapDot(idx);};})(i);
+    wr.appendChild(el);
+  });
+}
+function tapDot(i){
+  if(i!==sigP){sonar('err');document.getElementById('mfb').textContent='Sigue el orden. Toca el punto '+(sigP+1);return;}
+  sonar('tick');if(sigP>0)lins.push([sigP-1,sigP]);sigP++;
+  if(sigP>=figA.p.length){lins.push([sigP-1,0]);
+    document.getElementById('mfb').textContent='🎉 ¡Figura completa! ¡Increíble! +15 energía';
+    addPts(15);sonar('win');notif('🖐️','¡Figura completada!','¡Motricidad perfecta!');
+  } else document.getElementById('mfb').textContent='✅ ¡Bien! Toca el punto '+(sigP+1);
+  renderDots();
+}
+
+// LABERINTO
+var MZ={g:[],px:0,py:0,gx:0,gy:0,sz:7};
+function newMaz(){
+  var s=MZ.sz;MZ.g=[];
+  for(var y=0;y<s;y++){MZ.g.push([]);for(var x=0;x<s;x++)MZ.g[y].push(1);}
+  function tlr(x,y){MZ.g[y][x]=0;
+    var dirs=[[0,-2],[0,2],[-2,0],[2,0]].sort(function(){return Math.random()-.5;});
+    dirs.forEach(function(d){var nx=x+d[0],ny=y+d[1];
+      if(nx>=0&&nx<s&&ny>=0&&ny<s&&MZ.g[ny][nx]===1){MZ.g[y+d[1]/2][x+d[0]/2]=0;tlr(nx,ny);}});}
+  tlr(0,0);MZ.px=0;MZ.py=0;MZ.gx=s-1;MZ.gy=s-2;MZ.g[MZ.gy][MZ.gx]=0;setRes('maz-res','','');drawMaz();
+}
+function drawMaz(){
+  var cv=document.getElementById('mzC'),ctx=cv.getContext('2d'),s=MZ.sz;
+  var cell=Math.floor(322/s);cv.width=cell*s;cv.height=cell*s;
+  ctx.fillStyle='#0d1117';ctx.fillRect(0,0,cv.width,cv.height);
+  for(var y=0;y<s;y++)for(var x=0;x<s;x++)if(MZ.g[y][x]===1){ctx.fillStyle='#1e2d3d';ctx.fillRect(x*cell+1,y*cell+1,cell-2,cell-2);}
+  ctx.font=(cell*.72)+'px serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText('🚪',MZ.gx*cell+cell/2,MZ.gy*cell+cell/2);ctx.fillText('👧',MZ.px*cell+cell/2,MZ.py*cell+cell/2);
+}
+function mvMaz(dx,dy){
+  var nx=MZ.px+dx,ny=MZ.py+dy;
+  if(nx<0||nx>=MZ.sz||ny<0||ny>=MZ.sz||MZ.g[ny][nx]===1)return;
+  MZ.px=nx;MZ.py=ny;drawMaz();
+  if(MZ.px===MZ.gx&&MZ.py===MZ.gy){setRes('maz-res','ok','🎉 ¡Salida encontrada! +20 energía');
+    addPts(20);sonar('win');desblq('maz_ok');notif('🌀','¡Laberinto resuelto!','¡Eleven está orgullosa!');}
+}
+document.addEventListener('keydown',function(e){
+  var m={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]};
+  if(m[e.key]&&document.getElementById('tp-maz').classList.contains('on')){e.preventDefault();mvMaz(m[e.key][0],m[e.key][1]);}
+});
+
+// MEMORY
+var MITEMS=[
+  {em:'🔦',pal:'LINTERNA'},{em:'👧',pal:'NIÑA'},{em:'🌲',pal:'ÁRBOL'},{em:'🐶',pal:'PERRO'},
+  {em:'🏠',pal:'CASA'},{em:'🌀',pal:'PORTAL'},{em:'⚡',pal:'RAYO'},{em:'🧪',pal:'TUBO'},
+  {em:'🎭',pal:'MÁSCARA'},{em:'🎵',pal:'MÚSICA'},{em:'🌙',pal:'LUNA'},{em:'⭐',pal:'ESTRELLA'},
+  {em:'🦇',pal:'MURCIÉLAG.'},{em:'🌸',pal:'FLOR'},{em:'🚀',pal:'COHETE'},{em:'🎲',pal:'DADO'},
+  {em:'🍕',pal:'PIZZA'},{em:'🌊',pal:'OLA'},
+];
+var mCards=[],mFlip=[],mMatch=[],mBlk=false,mModo='ig',mPares=2;
+function setMemModo(m,btn){mModo=m;document.querySelectorAll('.mmb').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');
+  initMem(mPares,document.querySelector('.lv.on'));}
+function initMem(pares,btn){
+  mPares=pares;document.querySelectorAll('.lv').forEach(function(b){b.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+  clearInterval(S.mIV);S.mMov=0;S.mPar=0;S.mSeg=0;
+  document.getElementById('mm-m').textContent=0;document.getElementById('mm-p').textContent=0;document.getElementById('mm-t').textContent='0s';
+  setRes('mem-res','','');
+  var items=MITEMS.slice(0,pares);var deck;
+  if(mModo==='ig'){
+    deck=items.map(function(it){return {k:it.em,tipo:'em',val:it.em};})
+      .concat(items.map(function(it){return {k:it.em,tipo:'em',val:it.em};}))
+      .sort(function(){return Math.random()-.5;});
+  } else {
+    var m1=items.map(function(it,i){return {k:it.em,tipo:'em',val:it.em,par:i};});
+    var m2=items.map(function(it,i){return {k:it.em,tipo:'pal',val:it.pal,em:it.em,par:i};});
+    deck=m1.concat(m2).sort(function(){return Math.random()-.5;});
+  }
+  mCards=deck;mFlip=[];mMatch=[];mBlk=false;
+  var cols=pares<=2?2:pares<=4?4:pares<=6?4:pares<=9?6:6;
+  var grid=document.getElementById('mg');grid.style.gridTemplateColumns='repeat('+cols+',auto)';
+  var h='';deck.forEach(function(card,i){
+    var frontal;
+    if(mModo==='ig'){
+      frontal='<div class="mem-em">'+card.val+'</div>';
+    } else if(card.tipo==='em'){
+      // Carta de imagen: solo el emoji, grande
+      frontal='<div class="mem-em">'+card.val+'</div>';
+    } else {
+      // Carta de palabra: solo el texto, sin emoji
+      frontal='<div class="mem-pal" style="font-size:.85rem;padding:6px 4px;line-height:1.3;color:var(--am);font-weight:900;text-align:center">'+card.val+'</div>';
+    }
+    h+='<div class="mc" id="mc'+i+'" onclick="flipC('+i+')">'
+      +'<div class="mci"><div class="mcf">'+frontal+'</div><div class="mcb">?</div></div></div>';
+  });
+  grid.innerHTML=h;
+  S.mIV=setInterval(function(){S.mSeg++;document.getElementById('mm-t').textContent=S.mSeg+'s';},1000);
+}
+function flipC(i){
+  if(mBlk||mFlip.indexOf(i)>=0||mMatch.indexOf(i)>=0)return;
+  sonar('flip');document.getElementById('mc'+i).classList.add('flip');mFlip.push(i);
+  if(mFlip.length===2){S.mMov++;document.getElementById('mm-m').textContent=S.mMov;mBlk=true;
+    setTimeout(function(){var a=mFlip[0],b=mFlip[1],ok=false;
+      if(mModo==='ig'){ok=(mCards[a].k===mCards[b].k);}
+      else{ok=(mCards[a].par===mCards[b].par&&mCards[a].tipo!==mCards[b].tipo);}
+      if(ok){document.getElementById('mc'+a).classList.add('mtch');document.getElementById('mc'+b).classList.add('mtch');
+        mMatch.push(a);mMatch.push(b);S.mPar++;document.getElementById('mm-p').textContent=S.mPar;addPts(15);sonar('match');
+        if(mMatch.length===mCards.length){clearInterval(S.mIV);
+          setRes('mem-res','ok','🎉 ¡GANASTE! '+S.mSeg+'s · '+S.mMov+' movs. +30 energía');
+          addPts(30);sonar('win');desblq('mem_ok');notif('🃏','¡Memory completado!','¡Memoria de superhéroe!');
+        }
+      } else {document.getElementById('mc'+a).classList.remove('flip');document.getElementById('mc'+b).classList.remove('flip');sonar('err');resetRacha();}
+      mFlip=[];mBlk=false;},960);
+  }
+}
+
+// RITMO — jugadora pulsa cualquiera de los iluminados, en cualquier orden
+var RN=5,rPat=[],rMrc=[],rRep=false;
+function newRit(){
+  var len=2+Math.floor(Math.random()*3);
+  var all=[];for(var i=0;i<RN;i++)all.push(i);all.sort(function(){return Math.random()-.5;});
+  rPat=all.slice(0,len).sort(function(a,b){return a-b;});
+  rMrc=[];rRep=false;
+  document.getElementById('rb-show').disabled=false;document.getElementById('rb-rep').disabled=true;
+  setRes('rit-res','','');document.getElementById('rst').textContent='';
+  document.getElementById('rit-instr').textContent='Pulsa "Mostrar ritmo" para ver el patrón';
+  rBeats('idle');
+}
+function rBeats(mode){
+  var h='';
+  for(var i=0;i<RN;i++){
+    var enP=rPat.indexOf(i)>=0,mrc=rMrc.indexOf(i)>=0;
+    var cls='beat ';
+    if(mode==='show'){cls+=enP?'on':'off';}
+    else if(mode==='rep'){
+      if(mrc&&enP)cls+='hit clk';
+      else if(mrc&&!enP)cls+='miss clk';
+      else cls+='off clk';
+    } else cls+='off';
+    var lbl=(mode==='show'&&enP)?'👏':String(i+1);
+    h+='<div class="'+cls+'" id="rb'+i+'"'+(mode==='rep'?' onclick="tapRit('+i+')"':'')+'>'+lbl+'</div>';
+  }
+  document.getElementById('beats').innerHTML=h;
+}
+function showRit(){
+  document.getElementById('rb-show').disabled=true;
+  document.getElementById('rst').textContent='👀 ¡Fíjate qué botones se iluminan!';
+  var paso=0;
+  function next(){
+    rBeats('idle');
+    if(paso<rPat.length){
+      var idx=rPat[paso];var el=document.getElementById('rb'+idx);
+      if(el){el.className='beat on';el.textContent='👏';pitido(440+idx*60);}
+      paso++;setTimeout(next,700);
+    } else {
+      setTimeout(function(){rBeats('idle');document.getElementById('rb-rep').disabled=false;
+        document.getElementById('rst').textContent='¡Ahora pulsa esos botones! 👆';},400);
+    }
+  }
+  next();
+}
+function startRep(){rMrc=[];rRep=true;document.getElementById('rst').textContent='Pulsa los botones que se iluminaron 👆';rBeats('rep');}
+function tapRit(i){
+  if(!rRep||rMrc.indexOf(i)>=0)return;rMrc.push(i);
+  if(rPat.indexOf(i)>=0)pitido(440+i*60);else sonar('err');
+  rBeats('rep');
+  var ac=rMrc.filter(function(x){return rPat.indexOf(x)>=0;});
+  var fa=rMrc.filter(function(x){return rPat.indexOf(x)<0;});
+  if(ac.length===rPat.length){rRep=false;
+    if(fa.length===0){setRes('rit-res','ok','🎵 ¡Ritmo perfecto! Sin fallos. +20 energía');addPts(20);sonar('win');desblq('rit_ok');notif('🎵','¡Ritmo perfecto!','¡Tienes el ritmo en la sangre!');}
+    else{setRes('rit-res','ok','👍 ¡Encontraste todos los botones! '+fa.length+' extra. +10 energía');addPts(10);sonar('ok');}
+  }
+}
+
+// IMITACION
+var IMITS=[
+  {em:'😜',l:'Sacar la lengua',s:['😛','😝','🤪','😮']},
+  {em:'😁',l:'Sonrisa grande',s:['😄','😃','😀','🥰']},
+  {em:'😮',l:'Boca abierta',s:['😯','😲','🤭','😶']},
+  {em:'🤔',l:'Cara de pensar',s:['🧐','🤨','😒','🙄']},
+  {em:'😴',l:'Cara de dormir',s:['😪','🥱','😑','😶']},
+  {em:'🥺',l:'Cara tierna',s:['😢','😭','🥹','😔']},
+  {em:'😎',l:'Cara de fresco',s:['🤩','😏','😌','🙂']},
+  {em:'🤣',l:'Risa fuerte',s:['😂','😆','😄','🤭']},
+  {em:'😤',l:'Soplar fuerte',s:['😮‍💨','😩','😬','😑']},
+  {em:'🤗',l:'Cara alegre',s:['😊','🥳','😍','🤩']},
+  {em:'😬',l:'Mueca divertida',s:['😵','🤪','😳','😅']},
+  {em:'🙃',l:'Cara al revés',s:['😶','😑','🤐','😕']},
+];
+var iAc=0,iRonda=0,iTotal=10,iActivo=false,iUsados=[];
+function startImi(){
+  iRonda=0;iAc=0;iActivo=true;iUsados=[];
+  setRes('imi-res','','');
+  updImiBar();newImi();
+}
+function updImiBar(){
+  document.getElementById('imi-bar').style.width=(iRonda/iTotal*100)+'%';
+  document.getElementById('imi-cnt').textContent=iRonda+' / '+iTotal;
+}
+function newImi(){
+  if(!iActivo)return;
+  if(iUsados.length>=IMITS.length)iUsados=[];
+  var disponibles=IMITS.filter(function(x){return iUsados.indexOf(x.em)<0;});
+  var it=disponibles[Math.floor(Math.random()*disponibles.length)];
+  iUsados.push(it.em);
+  document.getElementById('iem').textContent=it.em;
+  document.getElementById('ilbl').textContent='Ronda '+(iRonda+1)+' de '+iTotal+' — Eleven hace "'+it.l+'" — cual es igual?';
+  setRes('imi-res','','');
+  var wr=it.s.slice(0,3);
+  var opts=[it.em].concat(wr).sort(function(){return Math.random()-.5;});
+  // Guardamos en variables globales, NO en propiedades del elemento DOM
+  window._imiOpts=opts;
+  window._imiCorrect=it.em;
+  document.getElementById('iopts').innerHTML=opts.map(function(o,idx){
+    return '<div class="iopt" data-idx="'+idx+'" onclick="chkImi(this)">'+o+'</div>';
+  }).join('');
+}
+function chkImi(el){
+  if(!iActivo)return;
+  var idx=parseInt(el.getAttribute('data-idx'));
+  var ch=window._imiOpts[idx];
+  var co=window._imiCorrect;
+  document.querySelectorAll('.iopt').forEach(function(o){o.onclick=null;});
+  document.querySelectorAll('.iopt').forEach(function(o){
+    var oi=parseInt(o.getAttribute('data-idx'));
+    var ov=window._imiOpts[oi];
+    if(ov===co)o.classList.add('acierto');
+    else if(ov===ch&&ch!==co)o.classList.add('fallo');
+  });
+  if(ch===co){
+    addPts(10);sonar('ok');iAc++;
+    if(iAc>=5)desblq('imi5');
+    notif('🎭','¡Imitación perfecta!','¡Eleven te da un 10!');
+  } else {
+    sonar('err');resetRacha();
+  }
+  iRonda++;updImiBar();
+  if(iRonda>=iTotal){
+    // Fin de las 10 rondas
+    iActivo=false;
+    var msg='🎉 ¡'+iAc+' de '+iTotal+' correctas! ';
+    if(iAc===iTotal)msg+='¡PERFECTO! ¡Eres una actriz increíble! +20 energía extra';
+    else if(iAc>=7)msg+='¡Muy bien Claudia! +10 energía extra';
+    else msg+='¡Buen intento! Pulsa "Empezar" para volver a intentarlo';
+    setRes('imi-res','ok',msg);
+    document.getElementById('iem').textContent='🏆';
+    document.getElementById('ilbl').textContent='¡Ronda terminada! '+iAc+'/'+iTotal+' aciertos';
+    document.getElementById('iopts').innerHTML='';
+    if(iAc===iTotal){addPts(20);sonar('win');}
+    else if(iAc>=7){addPts(10);sonar('ok');}
+  } else {
+    setTimeout(newImi,1400);
+  }
+}
+
+// UTIL
+function setRes(id,tp,txt){var el=document.getElementById(id);if(!el)return;el.textContent=txt;el.className='res'+(tp?' '+tp:'');}
+
+// REGISTRO SERVICE WORKER (PWA)
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('./sw.js').then(function(reg){
+      console.log('SW registrado OK:', reg.scope);
+    }).catch(function(err){
+      console.log('SW error:', err);
+    });
+  });
+}
+
+// INIT
+initRut();updTimer();
+</script>
+</body>
+</html>
